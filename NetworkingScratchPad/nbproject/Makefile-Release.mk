@@ -35,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/Classes/AwesomeClient.o \
-	${OBJECTDIR}/Classes/AwesomeServer.o \
+	${OBJECTDIR}/WebClient.o \
+	${OBJECTDIR}/WebServer.o \
 	${OBJECTDIR}/main.o
 
 
@@ -64,15 +64,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/networkingscratchpad: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/networkingscratchpad ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/Classes/AwesomeClient.o: Classes/AwesomeClient.cpp 
-	${MKDIR} -p ${OBJECTDIR}/Classes
+${OBJECTDIR}/WebClient.o: WebClient.cpp 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Classes/AwesomeClient.o Classes/AwesomeClient.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WebClient.o WebClient.cpp
 
-${OBJECTDIR}/Classes/AwesomeServer.o: Classes/AwesomeServer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/Classes
+${OBJECTDIR}/WebServer.o: WebServer.cpp 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Classes/AwesomeServer.o Classes/AwesomeServer.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WebServer.o WebServer.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -2,18 +2,20 @@
 #include<string.h>    //strlen
 #include<sys/socket.h>
 #include<arpa/inet.h> //inet_addr
+#include "WebServer.h"
+#include "WebClient.h"
 
 int main(int argc, char *argv[]) {
     
     int portNumer = 122000;
     
-    AwesomeServer aserver = new AwesomeServer(portNumer);
+    WebServer* aserver = new WebServer(portNumer);
     
-    aserver.ListenForNewConnections();
+    aserver->StartListening();
     
-    AwesomeClient aclient = new AwesomeClient();
+    WebClient* aclient = new WebClient();
     
-    aclient.Connect("127.0.0.1", portNumer);
+    aclient->Connect("127.0.0.1", portNumer);
     
     
     return 0;
