@@ -3,7 +3,7 @@
 
 class WebServer {
 public:
-    WebServer(int portNumer);
+    WebServer(char* portNumer);
     WebServer(const WebServer& orig);
     void StartListening();
     virtual ~WebServer();

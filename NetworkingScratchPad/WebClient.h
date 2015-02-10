@@ -5,7 +5,7 @@ class WebClient {
 public:
     WebClient();
     WebClient(const WebClient& orig);
-    void Connect(char* ipAddress, int port);
+    void Connect(char* ipAddress, char* port);
     virtual ~WebClient();
 private:
 

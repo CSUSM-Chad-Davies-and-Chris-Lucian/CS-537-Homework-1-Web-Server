@@ -7,8 +7,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Shimigami/Documents/School/CS%20537%20Networks/ScratchPad/NetworkingScratchPad/Makefile</file>
-            <file>file:/Users/Shimigami/Documents/School/CS%20537%20Networks/ScratchPad/NetworkingScratchPad/main.cpp</file>
+            <file>file:/Users/Shimigami/Documents/School/CS537Networks/ScratchPad/NetworkingScratchPad/WebClient.h</file>
+            <file>file:/Users/Shimigami/Documents/School/CS537Networks/ScratchPad/NetworkingScratchPad/WebServer.h</file>
+            <file>file:/Users/Shimigami/Documents/School/CS537Networks/ScratchPad/NetworkingScratchPad/WebServer.cpp</file>
+            <file>file:/Users/Shimigami/Documents/School/CS537Networks/ScratchPad/NetworkingScratchPad/main.cpp</file>
+            <file>file:/Users/Shimigami/Documents/School/CS537Networks/ScratchPad/NetworkingScratchPad/WebClient.cpp</file>
         </group>
     </open-files>
 </project-private>

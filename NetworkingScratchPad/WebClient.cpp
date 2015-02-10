@@ -6,7 +6,7 @@ WebClient::WebClient() {
 WebClient::WebClient(const WebClient& orig) {
 }
 
-void WebClient::Connect(char* ipAddress, int port){
+void WebClient::Connect(char* ipAddress, char* port){
 
 }
 
