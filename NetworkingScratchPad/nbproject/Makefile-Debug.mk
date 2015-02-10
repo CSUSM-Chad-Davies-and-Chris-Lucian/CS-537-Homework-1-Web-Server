@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Classes/AwesomeClient.o \
+	${OBJECTDIR}/Classes/AwesomeServer.o \
 	${OBJECTDIR}/main.o
 
 
@@ -61,6 +63,16 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/networkingscratchpad: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/networkingscratchpad ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/Classes/AwesomeClient.o: Classes/AwesomeClient.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Classes
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Classes/AwesomeClient.o Classes/AwesomeClient.cpp
+
+${OBJECTDIR}/Classes/AwesomeServer.o: Classes/AwesomeServer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/Classes
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Classes/AwesomeServer.o Classes/AwesomeServer.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
