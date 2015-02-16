@@ -1,6 +1,9 @@
 #ifndef WEBSERVER_H
 #define	WEBSERVER_H
 
+#include<sys/socket.h>
+#include<netinet/in.h>
+
 class WebServer {
 public:
     WebServer(char* portNumer);
@@ -8,7 +11,8 @@ public:
     void StartListening();
     virtual ~WebServer();
 private:
-
+    int socketHandle;
+    struct sockaddr_in socketInfo;
 };
 
 #endif

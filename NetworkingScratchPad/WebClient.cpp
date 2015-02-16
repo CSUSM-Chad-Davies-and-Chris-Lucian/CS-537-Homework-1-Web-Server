@@ -10,6 +10,10 @@ void WebClient::Connect(char* ipAddress, char* port){
 
 }
 
+void WebClient::SendGetRequestAndAwaitResponse(){
+    
+}
+
 WebClient::~WebClient() {
 }
 

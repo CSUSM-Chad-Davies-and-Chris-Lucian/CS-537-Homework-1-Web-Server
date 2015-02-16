@@ -9,16 +9,16 @@ int main(int argc, char *argv[]) {
     
     printf("Initializing Web Server...");
     
-    char* portNumber;
-    char* ipAddress;
+    char* portNumber = "12640";
+    char* ipAddress = "127.0.0.1";
     
     printf("\nPlease enter the host port number.\n");
-    scanf("%s", &portNumber);
+    //scanf("%s", &portNumber);
     
     
     
     printf("\nPlease enter the host IP address.\n");
-    scanf("%s",&ipAddress);
+    //scanf("%s",&ipAddress);
     
     WebServer* aserver = new WebServer(portNumber);
     aserver->StartListening();
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     
     WebClient* aclient = new WebClient();
     aclient->Connect(ipAddress, portNumber);
-    
+    aclient->SendGetRequestAndAwaitResponse();
     
     aclient->~WebClient();
     aserver->~WebServer();
