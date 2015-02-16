@@ -26,6 +26,10 @@ void WebServer::StartListening(){
         }
         
         listen(socketHandle,1);
+        
+        int socketConnection = accept(socketHandle, 0, 0); 
+        
+        
     }
 }
 
