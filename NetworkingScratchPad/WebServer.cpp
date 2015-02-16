@@ -3,7 +3,6 @@
 //What is c++ member level variable declaration
 
 WebServer::WebServer(char* portNumer) {
-
     socketHandle = socket(AF_INET, SOCK_STREAM, 0);
 
     if(socketHandle < 0)
@@ -11,6 +10,10 @@ WebServer::WebServer(char* portNumer) {
         // socket creation failed
     }
     
+
+    socketInfo.sin_family = AF_INET;
+    socketInfo.sin_addr.s_addr = htonl(INADDR_ANY);
+    socketInfo.sin_port = htons(80);
 }
 
 WebServer::WebServer(const WebServer& orig) {
@@ -28,7 +31,10 @@ void WebServer::StartListening(){
         listen(socketHandle,1);
         
         int socketConnection = accept(socketHandle, 0, 0); 
-        
+        if(socketConnection < 0)
+        {
+            //connection failed
+        }
         
     }
 }

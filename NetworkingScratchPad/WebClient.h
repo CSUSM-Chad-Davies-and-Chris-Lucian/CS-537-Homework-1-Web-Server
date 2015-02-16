@@ -1,6 +1,9 @@
 #ifndef WEBCLIENT_H
 #define	WEBCLIENT_H
 
+#include<sys/socket.h>
+#include<netinet/in.h>
+
 class WebClient {
 public:
     WebClient();
@@ -9,8 +12,9 @@ public:
     void SendGetRequestAndAwaitResponse();
     virtual ~WebClient();
 private:
-
+    int socketHandle;
+    struct sockaddr_in socketInfo;
 };
 
-#endif	
+#endif	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 
