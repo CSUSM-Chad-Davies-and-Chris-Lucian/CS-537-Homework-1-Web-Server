@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
 void *thread_start_server(void *context) {
     struct connectionParams *params = (struct connectionParams*) context;
-    printf("SERVER: Constructing Web Server at IP:%s port:%s", params->IPAddress.c_str(), params->PortNumber.c_str());
+    printf("SERVER: Constructing Web Server at IP:%s Port:%s", params->IPAddress.c_str(), params->PortNumber.c_str());
     WebServer* aserver = new WebServer(params->PortNumber);
     printf("\nSERVER: Starting Listener\n");
     aserver->StartListening();
@@ -65,7 +65,7 @@ void *thread_connect_client(void *context) {
     string portNumber = params->PortNumber;
     string ipAddress = params->IPAddress;
     
-    printf("CLIENT: Client Connecting to Web Server at IP:%s Port%s", params->IPAddress.c_str(), params->PortNumber.c_str());
+    printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", params->IPAddress.c_str(), params->PortNumber.c_str());
     WebClient* aclient = new WebClient();
     printf("\nCLENT: Connecting To Server\n");
     aclient->Connect(ipAddress, portNumber);
