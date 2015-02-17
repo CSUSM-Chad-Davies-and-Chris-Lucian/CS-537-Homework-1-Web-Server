@@ -7,7 +7,6 @@ WebServer::WebServer(string portNumer) {
     {
         // socket creation failed
     }
-    
 
     socketInfo.sin_family = AF_INET;
     socketInfo.sin_addr.s_addr = htonl(INADDR_ANY);

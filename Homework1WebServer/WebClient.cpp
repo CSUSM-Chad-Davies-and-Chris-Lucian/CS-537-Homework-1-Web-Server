@@ -3,9 +3,6 @@
 WebClient::WebClient() {
 }
 
-WebClient::WebClient(const WebClient& orig) {
-}
-
 void WebClient::Connect(string ipAddress, string port){
     
     socketInfo.sin_family = AF_INET;

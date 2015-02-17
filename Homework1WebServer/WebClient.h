@@ -11,7 +11,6 @@ using namespace std;
 class WebClient {
 public:
     WebClient();
-    WebClient(const WebClient& orig);
     void Connect(string ipAddress, string port);
     void SendGetRequestAndAwaitResponse();
     virtual ~WebClient();
