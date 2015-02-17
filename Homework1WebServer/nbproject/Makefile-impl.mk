@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=NetworkingScratchPad
+PROJECTNAME=Homework1WebServer
 
 # Active Configuration
 DEFAULTCONF=Debug

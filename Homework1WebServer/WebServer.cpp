@@ -1,6 +1,6 @@
 #include "WebServer.h"
 
-WebServer::WebServer(char* portNumer) {
+WebServer::WebServer(string portNumer) {
     socketHandle = socket(AF_INET, SOCK_STREAM, 0);
 
     if(socketHandle < 0)
@@ -11,10 +11,8 @@ WebServer::WebServer(char* portNumer) {
 
     socketInfo.sin_family = AF_INET;
     socketInfo.sin_addr.s_addr = htonl(INADDR_ANY);
-    socketInfo.sin_port = htons(80);
-}
-
-WebServer::WebServer(const WebServer& orig) {
+    int portInt = stoi(portNumer);
+    socketInfo.sin_port = htons(portInt);
 }
 
 void WebServer::StartListening(){

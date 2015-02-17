@@ -4,11 +4,12 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include <unistd.h>
+#include <string>
+using namespace std;
 
 class WebServer {
 public:
-    WebServer(char* portNumer);
-    WebServer(const WebServer& orig);
+    WebServer(string portNumer);
     void StartListening();
     virtual ~WebServer();
 private:

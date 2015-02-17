@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-MacOSX
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-MacOSX
-CND_ARTIFACT_NAME_Debug=networkingscratchpad
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/networkingscratchpad
+CND_ARTIFACT_NAME_Debug=homework1webserver
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-MacOSX/homework1webserver
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-MacOSX/package
-CND_PACKAGE_NAME_Debug=networkingscratchpad.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/networkingscratchpad.tar
+CND_PACKAGE_NAME_Debug=homework1webserver.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-MacOSX/package/homework1webserver.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-MacOSX
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-MacOSX
-CND_ARTIFACT_NAME_Release=networkingscratchpad
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/networkingscratchpad
+CND_ARTIFACT_NAME_Release=homework1webserver
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-MacOSX/homework1webserver
 CND_PACKAGE_DIR_Release=dist/Release/GNU-MacOSX/package
-CND_PACKAGE_NAME_Release=networkingscratchpad.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/networkingscratchpad.tar
+CND_PACKAGE_NAME_Release=homework1webserver.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-MacOSX/package/homework1webserver.tar
 #
 # include compiler specific variables
 #

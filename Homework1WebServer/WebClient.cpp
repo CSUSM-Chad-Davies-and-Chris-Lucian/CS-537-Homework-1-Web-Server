@@ -6,11 +6,12 @@ WebClient::WebClient() {
 WebClient::WebClient(const WebClient& orig) {
 }
 
-void WebClient::Connect(char* ipAddress, char* port){
+void WebClient::Connect(string ipAddress, string port){
     
     socketInfo.sin_family = AF_INET;
     socketInfo.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    socketInfo.sin_port = htons(80);
+    int portInt = stoi(port);
+    socketInfo.sin_port = htons(portInt);
 
     socketHandle = socket(AF_INET, SOCK_STREAM, 0);
     
