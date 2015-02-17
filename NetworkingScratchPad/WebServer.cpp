@@ -1,7 +1,5 @@
 #include "WebServer.h"
 
-//What is c++ member level variable declaration
-
 WebServer::WebServer(char* portNumer) {
     socketHandle = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -35,6 +33,12 @@ void WebServer::StartListening(){
         {
             //connection failed
         }
+        close(socketHandle);
+        
+        int rc = 0; // Actual number of bytes read
+        char buf[512];
+        rc = recv(socketConnection, buf, 512, 0);
+        buf[rc] = (char) NULL;
         
     }
 }
