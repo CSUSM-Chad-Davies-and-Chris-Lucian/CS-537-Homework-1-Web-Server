@@ -40,5 +40,6 @@ void WebServer::StartListening(){
 }
 
 WebServer::~WebServer() {
+  close(socketHandle);
 }
 

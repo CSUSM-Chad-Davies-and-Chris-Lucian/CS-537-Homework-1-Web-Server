@@ -36,5 +36,6 @@ void WebClient::SendGetRequestAndAwaitResponse(){
 }
 
 WebClient::~WebClient() {
+    close(socketHandle);
 }
 
