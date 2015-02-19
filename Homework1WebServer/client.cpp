@@ -18,14 +18,14 @@ struct connectionParams{
 
 int main(int argc, char *argv[]) {
 
-  if (argc < 3) {
-     fprintf(stderr,"usage %s <hostname> <port>\n", argv[0]);
-     exit(0);
-  }
+    if (argc < 3) {
+       fprintf(stderr,"usage %s <hostname> <port>\n", argv[0]);
+       exit(0);
+    }
 
-  pthread_t server_thread, client_thread;
-  string ipAddress = argv[0];
-  string portNumber = argv[1];
+    pthread_t server_thread, client_thread;
+    string ipAddress = argv[1];
+    string portNumber = argv[2];
 
     struct connectionParams params;
     params.IPAddress = ipAddress;

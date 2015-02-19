@@ -24,11 +24,9 @@ int main(int argc, char *argv[]) {
     }
 
     pthread_t server_thread, client_thread;
-    string ipAddress = argv[0];
     string portNumber = argv[1];
 
     struct connectionParams params;
-    params.IPAddress = ipAddress;
     params.PortNumber = portNumber;
 
     printf("\nMAIN: Starting server thread\n");
