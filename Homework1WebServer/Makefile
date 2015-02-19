@@ -1,4 +1,10 @@
-#g++ -o hw1 main.cpp WebServer.cpp WebClient.cpp -pthread
+all: server client tests
 
-Homework1 : main.cpp WebServer.cpp WebClient.cpp
-		g++ -o Homework1 main.cpp WebServer.cpp WebClient.cpp -pthread
+server: server.cpp WebServer.cpp WebClient.cpp
+	g++ -o server server.cpp WebServer.cpp WebClient.cpp -pthread
+
+client: client.cpp WebServer.cpp WebClient.cpp
+	g++ -o client client.cpp WebServer.cpp WebClient.cpp -pthread
+
+tests: main.cpp WebServer.cpp WebClient.cpp
+	g++ -o tests main.cpp WebServer.cpp WebClient.cpp -pthread
