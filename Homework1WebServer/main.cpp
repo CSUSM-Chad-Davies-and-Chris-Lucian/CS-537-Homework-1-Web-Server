@@ -18,22 +18,21 @@ struct connectionParams{
 };
 
 int main(int argc, char *argv[]) {
-    
+
     pthread_t server_thread, client_thread;
-    
     string ipAddress;
     string portNumber;
 
     printf("\nMAIN: Please enter the host IP address.\n");
     cin >> ipAddress;
-    
+
     printf("\nMAIN: Please enter the host port number.\n");
     cin >> portNumber;
-    
+
     struct connectionParams params;
-    params.IPAddress = ipAddress; 
+    params.IPAddress = ipAddress;
     params.PortNumber = portNumber;
-    
+
     printf("\nMAIN: Starting server thread\n");
     pthread_create(&server_thread, 0, thread_start_server,&params);
     printf("\nMAIN: Starting client thread\n");
@@ -44,7 +43,7 @@ int main(int argc, char *argv[]) {
     pthread_join(client_thread, 0);
     printf("\nMAIN: Joining server thread\n");
     pthread_join(server_thread,0);
-    
+
     printf("\nMAIN: Ending Program\n");
     return 0;
 }
@@ -64,7 +63,7 @@ void *thread_connect_client(void *context) {
     struct connectionParams *params = (struct connectionParams*) context;
     string portNumber = params->PortNumber;
     string ipAddress = params->IPAddress;
-    
+
     printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", params->IPAddress.c_str(), params->PortNumber.c_str());
     WebClient* aclient = new WebClient();
     printf("\nCLENT: Connecting To Server\n");
