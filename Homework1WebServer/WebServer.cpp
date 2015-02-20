@@ -1,5 +1,11 @@
 #include "WebServer.h"
 
+struct readMessageParams{
+  int socketConnection;
+  void(*messageRoutingFunction)(string message);
+};
+
+
 WebServer::WebServer(string portNumer) {
 
     socketHandle = socket(AF_INET, SOCK_STREAM, 0);
@@ -31,20 +37,40 @@ WebServer::WebServer(string portNumer) {
 void WebServer::StartListening(void (*messageRoutingFunction)(string message)){
     if(socketHandle >= 0)
     {
-        int socketConnection = accept(socketHandle, 0, 0);
-        if(socketConnection < 0)
+        pthread_t thread_id;
+        while(1)
         {
-            fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
-                    errno, strerror(errno));
-            return;
+            socklen_t client_length;
+            struct sockaddr_in client_address;
+            client_length = sizeof(client_address);
+            int socketConnection = accept(socketHandle,
+              (struct sockaddr *) &client_address, &client_length);
+            if(socketConnection < 0)
+            {
+                fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
+                        errno, strerror(errno));
+                return;
+            }
+
+            struct readMessageParams params;
+            params.socketConnection = socketConnection;
+            params.messageRoutingFunction = messageRoutingFunction;
+
+            pthread_create(&thread_id, NULL, &ThreadReadMessage, (void *)&params);
         }
         close(socketHandle);
-
-        this->ReadMessage(socketConnection,messageRoutingFunction);
     }
 }
 
-void WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message)){
+
+void *WebServer::ThreadReadMessage(void *context)
+{
+  struct readMessageParams *params = ((struct readMessageParams *)context);
+  return WebServer::ReadMessage(params->socketConnection,params->messageRoutingFunction);
+  return 0;
+}
+
+void *WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message)){
   int failedWhenNegative;
   int sockfd;
   char  buffer[256];
@@ -54,7 +80,7 @@ void WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction)
       fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
               errno, strerror(errno));
       close(sockfd);
-      return;
+      return  NULL;
   }
 
   string message = string(buffer);

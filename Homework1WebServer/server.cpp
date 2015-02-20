@@ -30,13 +30,13 @@ int main(int argc, char *argv[]) {
     struct connectionParams params;
     params.PortNumber = portNumber;
 
-    printf("\nMAIN: Starting server thread\n");
+    printf("\nSERVER MAIN: Starting server thread\n");
     pthread_create(&server_thread, 0, thread_start_server,&params);
 
-    printf("\nMAIN: Joining server thread\n");
+    printf("\nSERVER MAIN: Joining server thread\n");
     pthread_join(server_thread,0);
 
-    printf("\nMAIN: Ending Program\n");
+    printf("\nSERVER MAIN: Ending Program\n");
     return 0;
 }
 
@@ -53,5 +53,5 @@ void *thread_start_server(void *context) {
 
 void routeMessage(string message)
 {
-    printf("Hello World %s", message.c_str());
+    printf("\nHello World %s\n", message.c_str());
 }

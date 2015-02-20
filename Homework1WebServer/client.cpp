@@ -31,14 +31,14 @@ int main(int argc, char *argv[]) {
     params.IPAddress = ipAddress;
     params.PortNumber = portNumber;
 
-    printf("\nMAIN: Starting client thread\n");
+    printf("\nCLIENT MAIN: Starting client thread\n");
     pthread_create(&client_thread, 0, thread_connect_client,&params);
 
 
-    printf("\nMAIN: Joining client thread\n");
+    printf("\nCLIENT MAIN: Joining client thread\n");
     pthread_join(client_thread, 0);
 
-    printf("\nMAIN: Ending Program\n");
+    printf("\nCLIENT MAIN: Ending Program\n");
     return 0;
 }
 
