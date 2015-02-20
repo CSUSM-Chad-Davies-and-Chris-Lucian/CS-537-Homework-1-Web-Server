@@ -53,5 +53,5 @@ void *thread_start_server(void *context) {
 
 void routeMessage(string message)
 {
-    printf("\nHello World %s\n", message.c_str());
+    printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
 }

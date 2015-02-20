@@ -6,6 +6,7 @@
 #include<string.h>
 #include <unistd.h>
 #include <string>
+#include <errno.h>
 using namespace std;
 
 class WebClient {

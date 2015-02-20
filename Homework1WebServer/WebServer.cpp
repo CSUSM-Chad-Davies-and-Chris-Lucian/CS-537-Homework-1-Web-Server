@@ -84,7 +84,6 @@ void *WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction
   }
 
   string message = string(buffer);
-  printf("%s", message.c_str());
   (*messageRoutingFunction)(message);
 }
 

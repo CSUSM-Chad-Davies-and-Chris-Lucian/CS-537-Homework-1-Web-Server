@@ -14,14 +14,18 @@ void WebClient::Connect(string ipAddress, string port){
 
     if(socketHandle < 0)
     {
-        //Socket creation failed
+        fprintf(stderr, "Error opening socket, errno = %d (%s) \n",
+                errno, strerror(errno));
+        return;
     }
 
 
     int connectionSuccess = connect(socketHandle, (struct sockaddr *) &socketInfo, sizeof (sockaddr_in));
     if(connectionSuccess < 0)
     {
-        //Connection failed
+        fprintf(stderr, "Error connecting to socket, errno = %d (%s) \n",
+                errno, strerror(errno));
+        return;
     }
 
 }
@@ -30,7 +34,7 @@ void WebClient::SendGetRequestAndAwaitResponse(){
     int rc = 0; // Actual number of bytes read by function read()
     char buf[512];
 
-    strcpy(buf, "Message to send");
+    strcpy(buf, "GET / HTTP/1.0");
     send(socketHandle, buf, strlen(buf) + 1, 0);
 }
 
