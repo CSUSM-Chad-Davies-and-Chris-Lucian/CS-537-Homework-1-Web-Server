@@ -8,3 +8,6 @@ client: client.cpp WebServer.cpp WebClient.cpp
 
 tests: tests.cpp
 	gcc -lstdc++ -o tests tests.cpp
+
+clear_ls_make: clear_ls_make.cpp
+	gcc -lstdc++ -o clear_ls_make clear_ls_make.cpp

@@ -19,7 +19,8 @@ class WebServer {
 public:
     WebServer(string portNumer);
     void StartListening(void (*messageRoutingFunction)(string message));
-    void ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message));
+    static void *ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message));
+    static void *ThreadReadMessage(void *context);
     virtual ~WebServer();
 private:
     int socketHandle;
