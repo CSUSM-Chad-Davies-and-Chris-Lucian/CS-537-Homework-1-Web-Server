@@ -9,7 +9,8 @@
 #include <iostream>
 using namespace std;
 
-void* thread_start_server(void *ptr);
+void* thread_start_server(void *context);
+void routeMessage(string message);
 
 struct connectionParams{
     string IPAddress;
@@ -44,8 +45,13 @@ void *thread_start_server(void *context) {
     printf("SERVER: Constructing Web Server at IP:%s Port:%s", params->IPAddress.c_str(), params->PortNumber.c_str());
     WebServer* aserver = new WebServer(params->PortNumber);
     printf("\nSERVER: Starting Listener\n");
-    aserver->StartListening();
+    aserver->StartListening(&routeMessage);
     printf("\nSERVER: Finished Listening\n");
     aserver->~WebServer();
     printf("\nSERVER: Web Server Destroyed.\n");
+}
+
+void routeMessage(string message)
+{
+    printf("Hello World %s", message.c_str());
 }

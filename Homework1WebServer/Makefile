@@ -6,5 +6,5 @@ server: server.cpp WebServer.cpp WebClient.cpp
 client: client.cpp WebServer.cpp WebClient.cpp
 	g++ -o client client.cpp WebServer.cpp WebClient.cpp -pthread
 
-tests: main.cpp
-	g++ -o tests main.cpp
+tests: tests.cpp
+	g++ -o tests tests.cpp

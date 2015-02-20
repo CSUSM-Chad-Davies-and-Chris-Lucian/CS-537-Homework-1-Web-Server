@@ -28,7 +28,7 @@ WebServer::WebServer(string portNumer) {
     listen(socketHandle,1);
 }
 
-void WebServer::StartListening(){
+void WebServer::StartListening(void (*messageRoutingFunction)(string message)){
     if(socketHandle >= 0)
     {
         int socketConnection = accept(socketHandle, 0, 0);
@@ -40,11 +40,26 @@ void WebServer::StartListening(){
         }
         close(socketHandle);
 
-        int rc = 0; // Actual number of bytes read
-        char buf[512];
-        rc = recv(socketConnection, buf, 512, 0);
-        buf[rc] = (char) NULL;
+        this->ReadMessage(socketConnection,messageRoutingFunction);
     }
+}
+
+void WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message)){
+  int failedWhenNegative;
+  int sockfd;
+  char  buffer[256];
+  bzero(buffer,256);
+  failedWhenNegative = read(sockentConnection,buffer,255);
+  if (failedWhenNegative < 0) {
+      fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
+              errno, strerror(errno));
+      close(sockfd);
+      return;
+  }
+
+  string message = string(buffer);
+  printf("%s", message.c_str());
+  (*messageRoutingFunction)(message);
 }
 
 WebServer::~WebServer() {
