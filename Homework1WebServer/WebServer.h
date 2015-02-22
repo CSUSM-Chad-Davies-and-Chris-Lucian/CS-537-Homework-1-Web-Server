@@ -18,8 +18,7 @@ using namespace std;
 class WebServer {
 public:
     WebServer(string portNumer);
-    void StartListening(void (*messageRoutingFunction)(string message));
-    static void *ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message));
+    void StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer));
     static void *ThreadReadMessage(void *context);
     virtual ~WebServer();
 private:

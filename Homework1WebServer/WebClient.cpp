@@ -32,10 +32,23 @@ void WebClient::Connect(string ipAddress, string port){
 
 void WebClient::SendGetRequestAndAwaitResponse(){
     int rc = 0; // Actual number of bytes read by function read()
-    char buf[512];
+    char buffer[512];
 
-    strcpy(buf, "GET / HTTP/1.0");
-    send(socketHandle, buf, strlen(buf) + 1, 0);
+    strcpy(buffer, "GET / HTTP/1.0");
+    send(socketHandle, buffer, strlen(buffer) + 1, 0);
+
+    bzero(buffer,256);
+
+    int read_success = read(socketHandle,buffer,255);
+    if (read_success < 0)  {
+        fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
+                errno, strerror(errno));
+        return;
+    }
+
+    /* Display server response */
+    printf("%s\n",buffer);
+
 }
 
 WebClient::~WebClient() {

@@ -2,7 +2,8 @@
 
 struct readMessageParams{
   int socketConnection;
-  void(*messageRoutingFunction)(string message);
+  void(*messageRoutingFunction)(string message, WebServer *server);
+  WebServer* webServer;
 };
 
 
@@ -34,7 +35,7 @@ WebServer::WebServer(string portNumer) {
     listen(socketHandle,1);
 }
 
-void WebServer::StartListening(void (*messageRoutingFunction)(string message)){
+void WebServer::StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer)){
     if(socketHandle >= 0)
     {
         pthread_t thread_id;
@@ -55,7 +56,7 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message)){
             struct readMessageParams params;
             params.socketConnection = socketConnection;
             params.messageRoutingFunction = messageRoutingFunction;
-
+            params.webServer = this;
             pthread_create(&thread_id, NULL, &ThreadReadMessage, (void *)&params);
         }
         close(socketHandle);
@@ -66,16 +67,13 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message)){
 void *WebServer::ThreadReadMessage(void *context)
 {
   struct readMessageParams *params = ((struct readMessageParams *)context);
-  return WebServer::ReadMessage(params->socketConnection,params->messageRoutingFunction);
-  return 0;
-}
+  int socketConnection =params->socketConnection;
 
-void *WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction)(string message)){
   int failedWhenNegative;
   int sockfd;
   char  buffer[256];
   bzero(buffer,256);
-  failedWhenNegative = read(sockentConnection,buffer,255);
+  failedWhenNegative = read(socketConnection,buffer,255);
   if (failedWhenNegative < 0) {
       fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
               errno, strerror(errno));
@@ -84,7 +82,8 @@ void *WebServer::ReadMessage(int sockentConnection,void (*messageRoutingFunction
   }
 
   string message = string(buffer);
-  (*messageRoutingFunction)(message);
+  params->messageRoutingFunction(message, params->webServer);
+  return  NULL;
 }
 
 WebServer::~WebServer() {

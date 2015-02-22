@@ -10,7 +10,7 @@
 using namespace std;
 
 void* thread_start_server(void *context);
-void routeMessage(string message);
+void routeMessage(string message, WebServer *server);
 
 struct connectionParams{
     string IPAddress;
@@ -51,7 +51,7 @@ void *thread_start_server(void *context) {
     printf("\nSERVER: Web Server Destroyed.\n");
 }
 
-void routeMessage(string message)
+void routeMessage(string message, WebServer *server)
 {
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
 }
