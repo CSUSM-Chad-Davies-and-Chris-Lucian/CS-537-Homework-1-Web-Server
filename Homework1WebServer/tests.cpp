@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     string port1;
-    port1 = "65036";
+    port1 = argv[1];
 
     system("echo \e[92mKilling Old Processes:\e[0m");
     system("ps | grep server | awk '{print $1}' | xargs kill");
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     sleep(1);
 
-    for (size_t index = 0; index < 3; index++) {
+    for (size_t index = 0; index < 1; index++) {
         printf("\nTESTS: Starting Client App %d\n",index);
 
         string command2 = "./client 127.0.0.1 " + port1 + " &";
