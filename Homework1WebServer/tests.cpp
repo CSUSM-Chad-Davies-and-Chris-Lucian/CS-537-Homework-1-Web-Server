@@ -1,18 +1,38 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <string>
+
+using namespace std;
 
 int main(int argc, char *argv[]) {
+    string port1;
+    port1 = "65036";
+
     system("echo \e[92mKilling Old Processes:\e[0m");
     system("ps | grep server | awk '{print $1}' | xargs kill");
     system("ps | grep client | awk '{print $1}' | xargs kill");
 
+    if(getlogin() == "davie009")
+    {
+      port1 = "65037";
+    }
+    printf("getlogin_r %s", getlogin());
+
     printf("\nTESTS: Starting Server App\n");
-    system("./server 82341 &");
+    string command = "./server " + port1 + " &";
+
+    system(command.c_str());
+
+    sleep(1);
 
     for (size_t index = 0; index < 3; index++) {
         printf("\nTESTS: Starting Client App %d\n",index);
-        system("./client 127.0.0.1 82341 &");
+
+        string command2 = "./client 127.0.0.1 " + port1 + " &";
+
+        system(command2.c_str());
     }
 
     return 0;
