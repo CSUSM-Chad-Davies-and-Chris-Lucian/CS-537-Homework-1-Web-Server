@@ -14,7 +14,7 @@
 #include <streambuf>
 #include <vector>
 using namespace std;
-using namespace boost;
+//using namespace boost;
 
 void* thread_start_server(void *context);
 void routeMessage(string message, WebServer *server);
@@ -60,13 +60,11 @@ void *thread_start_server(void *context) {
 
 void routeMessage(string message, WebServer *server)
 {
-  printf("2");
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
-    printf("newone");
+
     vector <string> fields;
 
-    split( fields, message, is_any_of( " " ));
-    printf("split");
+    boost::split( fields, message, boost::is_any_of( " " ));
 
     //TODO: Add error checking
 
@@ -74,18 +72,17 @@ void routeMessage(string message, WebServer *server)
     string directory = fields[1];
     string protocal_version = fields[2];
 
-    printf("undervar1");
     vector <string> fields2;
 
-    split (fields2, protocal_version, is_any_of("//"));
-    printf("var2");
+    boost::split (fields2, protocal_version, boost::is_any_of("//"));
 
     string protocal = fields2[0];
     string version = fields2[1];
 
-    printf("command: %s, directory: %s, protocal: %s, version: %s", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
 
-    if(directory == "//")
+    printf("command: %s, directory: %s, protocal: %s, version: %s\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
+
+    if(directory == "/")
     {
       directory = "/index.html";
     }
@@ -93,55 +90,17 @@ void routeMessage(string message, WebServer *server)
     if(command == "GET")
     {
       string directory_path = "html_root" + directory;
-      printf ("between1");
 
       string line;
-      printf ("between2");
       ifstream myfile (directory_path.c_str());
-      printf ("between3");
+
       if (myfile.is_open())
       {
-        printf ("between4");
         while ( getline (myfile,line) )
         {
-          printf ("while");
-          printf("line: %s", line.c_str());
+          cout << line << endl;
         }
-        printf ("between5");
         myfile.close();
       }
-      printf ("between6");
-      /*ifstream t(directory_path.c_str(), std::ios::in|std::ios::ate);
-      string str;
-
-      if(!t )
-      {
-        cout << "file not loaded" << endl;
-      }
-
-      t.seekg(0, ios::end);
-      cout << "a" << endl;
-
-      streampos filesize = t.tellg();
-      cout << "c" << endl;
-
-      while (!t.eof())
-      {
-        str = t.get();
-        cout << str;
-      }*/
-
-
-      //str.reserve(t.tellg());
-      //cout << "b" << endl;
-      /*t.seekg(0, ios::beg);
-
-      cout << "h" << endl;
-      str.assign((istreambuf_iterator<char>(t)),
-                  istreambuf_iterator<char>());
-      cout << "p" << endl;
-
-      cout << "str: " << str << endl;//*/
-
     }
 }
