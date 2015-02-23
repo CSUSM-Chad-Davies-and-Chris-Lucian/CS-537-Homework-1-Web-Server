@@ -1,4 +1,7 @@
 #include "WebClient.h"
+#include <iostream>
+
+using namespace std;
 
 WebClient::WebClient() {
 }
@@ -32,22 +35,29 @@ void WebClient::Connect(string ipAddress, string port){
 
 void WebClient::SendGetRequestAndAwaitResponse(){
     int rc = 0; // Actual number of bytes read by function read()
-    char buffer[512];
+    char buffer[256];
 
     strcpy(buffer, "GET / HTTP/1.0");
-    send(socketHandle, buffer, strlen(buffer) + 1, 0);
+    int failedWhenNegative = write(socketHandle, buffer, 255);
+
+    if (failedWhenNegative < 0)  {
+        fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
+                errno, strerror(errno));
+        return;
+    }
 
     bzero(buffer,256);
 
     int read_success = read(socketHandle,buffer,255);
     if (read_success < 0)  {
+      cout << "hello world" << endl;
         fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
                 errno, strerror(errno));
         return;
     }
 
     /* Display server response */
-    printf("%s\n",buffer);
+    printf("buffercontents: %s\n",buffer);
 
 }
 

@@ -86,6 +86,21 @@ void *WebServer::ThreadReadMessage(void *context)
   return  NULL;
 }
 
+void WebServer::WriteMessage(string message)
+{
+  char  buffer[256];
+  bzero(buffer,256);
+
+  strcpy(buffer, "I got your message");
+  int failedWhenNegative = write(socketHandle,buffer,255);
+
+  if (failedWhenNegative < 0)  {
+      fprintf(stderr, "Error writing to socket, errno = %d (%s)\n",
+              errno, strerror(errno));
+      close(socketHandle);
+  }
+}
+
 WebServer::~WebServer() {
     close(socketHandle);
 }

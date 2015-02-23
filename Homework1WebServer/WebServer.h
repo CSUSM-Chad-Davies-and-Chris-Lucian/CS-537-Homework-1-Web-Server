@@ -20,6 +20,7 @@ public:
     WebServer(string portNumer);
     void StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer));
     static void *ThreadReadMessage(void *context);
+    void WriteMessage(string message);
     virtual ~WebServer();
 private:
     int socketHandle;

@@ -91,7 +91,7 @@ void routeMessage(string message, WebServer *server)
     {
       string directory_path = "html_root" + directory;
 
-      string line;
+      /*string line;
       ifstream myfile (directory_path.c_str());
 
       if (myfile.is_open())
@@ -101,6 +101,9 @@ void routeMessage(string message, WebServer *server)
           cout << line << endl;
         }
         myfile.close();
-      }
+      }*/
+
+      server->WriteMessage("hoy");
+
     }
 }
