@@ -12,8 +12,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <iostream>
 
 using namespace std;
+
 
 class WebServer {
 public:
@@ -24,6 +26,7 @@ public:
     virtual ~WebServer();
 private:
     int socketHandle;
+    int socketConnection;
     struct sockaddr_in socketInfo;
 };
 

@@ -44,7 +44,7 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             socklen_t client_length;
             struct sockaddr_in client_address;
             client_length = sizeof(client_address);
-            int socketConnection = accept(socketHandle,
+            socketConnection = accept(socketHandle,
               (struct sockaddr *) &client_address, &client_length);
             if(socketConnection < 0)
             {
@@ -91,10 +91,14 @@ void WebServer::WriteMessage(string message)
   char  buffer[256];
   bzero(buffer,256);
 
-  strcpy(buffer, "I got your message");
-  int failedWhenNegative = write(socketHandle,buffer,255);
+  strcpy(buffer, message.c_str());
+  printf("sending %s\n",buffer);
+  printf("%d", socketHandle);
+  int failedWhenNegative = write(socketConnection,buffer,255);
 
   if (failedWhenNegative < 0)  {
+
+      cout << "sever failed" << endl;
       fprintf(stderr, "Error writing to socket, errno = %d (%s)\n",
               errno, strerror(errno));
       close(socketHandle);
@@ -102,5 +106,5 @@ void WebServer::WriteMessage(string message)
 }
 
 WebServer::~WebServer() {
-    close(socketHandle);
+    //close(socketHandle);
 }

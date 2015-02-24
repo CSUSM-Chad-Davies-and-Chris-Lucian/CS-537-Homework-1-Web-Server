@@ -90,20 +90,16 @@ void routeMessage(string message, WebServer *server)
     if(command == "GET")
     {
       string directory_path = "html_root" + directory;
-
-      /*string line;
+      string line;
       ifstream myfile (directory_path.c_str());
 
       if (myfile.is_open())
       {
         while ( getline (myfile,line) )
         {
-          cout << line << endl;
+          server->WriteMessage(line);
         }
         myfile.close();
-      }*/
-
-      server->WriteMessage("hoy");
-
+      }
     }
 }

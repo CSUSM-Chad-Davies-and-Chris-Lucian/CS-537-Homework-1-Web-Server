@@ -7,7 +7,10 @@
 #include <unistd.h>
 #include <string>
 #include <errno.h>
+#include <iostream>
+
 using namespace std;
+
 
 class WebClient {
 public:
