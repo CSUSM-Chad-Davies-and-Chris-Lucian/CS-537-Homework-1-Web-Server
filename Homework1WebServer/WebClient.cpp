@@ -29,32 +29,31 @@ void WebClient::Connect(string ipAddress, string port){
 
 }
 
-void WebClient::SendGetRequestAndAwaitResponse(){
+void WebClient::SendRequest(string request){
     int rc = 0; // Actual number of bytes read by function read()
     char buffer[256];
 
-    strcpy(buffer, "GET / HTTP/1.0");
+    strcpy(buffer, request.c_str());
     int failedWhenNegative = write(socketHandle, buffer, 255);
 
     if (failedWhenNegative < 0)  {
+        printf("Client Read Failed");
         fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
                 errno, strerror(errno));
         return;
     }
+
 
     bzero(buffer,256);
-
     failedWhenNegative = read(socketHandle,buffer,255);
     if (failedWhenNegative < 0)  {
-      cout << "client failed" << endl;
+        printf("Client Write Failed");
         fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
                 errno, strerror(errno));
         return;
     }
-
-    /* Display server response */
-    printf("%s\n",string(buffer).c_str());
-
+    string result = string(buffer);
+    printf("%s\n",result.c_str());
 }
 
 WebClient::~WebClient() {

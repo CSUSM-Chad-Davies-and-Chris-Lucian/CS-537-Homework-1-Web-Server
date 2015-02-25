@@ -16,7 +16,7 @@ class WebClient {
 public:
     WebClient();
     void Connect(string ipAddress, string port);
-    void SendGetRequestAndAwaitResponse();
+    void SendRequest(string request);
     virtual ~WebClient();
 private:
     int socketHandle;

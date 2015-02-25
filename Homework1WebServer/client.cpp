@@ -31,7 +31,11 @@ int main(int argc, char *argv[]) {
     printf("\nCLENT: Connecting To Server\n");
     aclient->Connect(ipAddress, portNumber);
     printf("\nCLENT: Sending Get Request\n");
-    aclient->SendGetRequestAndAwaitResponse();
+
+    aclient->SendRequest("GET / HTTP/1.0");
+    aclient->SendRequest("GET /large_file.html HTTP/1.0");
+    aclient->SendRequest("GET /missing_file.html HTTP/1.0");
+
     printf("\nCLENT: Request Finished. Destroying Client\n");
     aclient->~WebClient();
     return 0;

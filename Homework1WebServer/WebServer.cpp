@@ -66,24 +66,27 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
 
 void *WebServer::ThreadReadMessage(void *context)
 {
-  struct readMessageParams *params = ((struct readMessageParams *)context);
-  int socketConnection =params->socketConnection;
+  while(1)
+  {
+      struct readMessageParams *params = ((struct readMessageParams *)context);
+      int socketConnection =params->socketConnection;
 
-  int failedWhenNegative;
-  int sockfd;
-  char  buffer[256];
-  bzero(buffer,256);
-  failedWhenNegative = read(socketConnection,buffer,255);
-  if (failedWhenNegative < 0) {
-      fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
-              errno, strerror(errno));
-      close(sockfd);
-      return  NULL;
+      int failedWhenNegative;
+      int sockfd;
+      char  buffer[256];
+      bzero(buffer,256);
+      failedWhenNegative = read(socketConnection,buffer,255);
+      if (failedWhenNegative < 0) {
+          printf("Server Read Failed");
+          fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
+                  errno, strerror(errno));
+          close(sockfd);
+          return  NULL;
+      }
+
+      string message = string(buffer);
+      params->messageRoutingFunction(message, params->webServer);
   }
-
-  string message = string(buffer);
-  params->messageRoutingFunction(message, params->webServer);
-  return  NULL;
 }
 
 void WebServer::WriteMessage(string message)
@@ -92,13 +95,10 @@ void WebServer::WriteMessage(string message)
   bzero(buffer,256);
 
   strcpy(buffer, message.c_str());
-  printf("sending %s\n",buffer);
-  printf("%d", socketHandle);
   int failedWhenNegative = write(socketConnection,buffer,255);
 
   if (failedWhenNegative < 0)  {
-
-      cout << "sever failed" << endl;
+      printf("Server Write Failed");
       fprintf(stderr, "Error writing to socket, errno = %d (%s)\n",
               errno, strerror(errno));
       close(socketHandle);

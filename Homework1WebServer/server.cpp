@@ -80,7 +80,7 @@ void routeMessage(string message, WebServer *server)
     string version = fields2[1];
 
 
-    printf("command: %s, directory: %s, protocal: %s, version: %s\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
+    printf("command: '%s', directory: '%s', protocal: '%s', version: '%s'\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
 
     if(directory == "/")
     {
@@ -92,14 +92,21 @@ void routeMessage(string message, WebServer *server)
       string directory_path = "html_root" + directory;
       string line;
       ifstream myfile (directory_path.c_str());
-
+      printf("Server Sending File %s", directory_path.c_str() );
       if (myfile.is_open())
       {
-        while ( getline (myfile,line) )
-        {
-          server->WriteMessage(line);
-        }
-        myfile.close();
+          std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
+          server->WriteMessage(file_contents);
+          myfile.close();
       }
+    }
+    if(command == "HEAD")
+    {
+    }
+    if(command == "PUT")
+    {
+    }
+    if(command == "DELETE")
+    {
     }
 }
