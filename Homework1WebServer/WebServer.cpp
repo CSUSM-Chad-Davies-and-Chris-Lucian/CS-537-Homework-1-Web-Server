@@ -63,7 +63,6 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
     }
 }
 
-
 void *WebServer::ThreadReadMessage(void *context)
 {
   while(1)
@@ -73,9 +72,9 @@ void *WebServer::ThreadReadMessage(void *context)
 
       int failedWhenNegative;
       int sockfd;
-      char  buffer[256];
-      bzero(buffer,256);
-      failedWhenNegative = read(socketConnection,buffer,255);
+      char  buffer[4000];
+      bzero(buffer,4000);
+      failedWhenNegative = read(socketConnection,buffer,4000);
       if (failedWhenNegative < 0) {
           printf("Server Read Failed");
           fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
@@ -91,11 +90,12 @@ void *WebServer::ThreadReadMessage(void *context)
 
 void WebServer::WriteMessage(string message)
 {
-  char  buffer[256];
-  bzero(buffer,256);
+  int length = message.length();
+  char  buffer[length];
 
+  bzero(buffer,length);
   strcpy(buffer, message.c_str());
-  int failedWhenNegative = write(socketConnection,buffer,255);
+  int failedWhenNegative = write(socketConnection,buffer,length);
 
   if (failedWhenNegative < 0)  {
       printf("Server Write Failed");

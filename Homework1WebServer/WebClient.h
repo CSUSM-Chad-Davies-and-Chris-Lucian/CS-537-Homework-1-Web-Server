@@ -1,6 +1,8 @@
 #ifndef WEBCLIENT_H
 #define	WEBCLIENT_H
 
+
+
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<string.h>

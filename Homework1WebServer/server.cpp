@@ -90,9 +90,9 @@ void routeMessage(string message, WebServer *server)
     if(command == "GET")
     {
       string directory_path = "html_root" + directory;
+      printf("Server Sending File %s", directory_path.c_str());
       string line;
       ifstream myfile (directory_path.c_str());
-      printf("Server Sending File %s", directory_path.c_str() );
       if (myfile.is_open())
       {
           std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
