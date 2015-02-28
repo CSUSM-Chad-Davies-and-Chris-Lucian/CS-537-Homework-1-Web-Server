@@ -75,6 +75,31 @@ string getHeader(int content_length)
   return response;
 }
 
+void execture_get_command(WebServer *server, string directory_path)
+{
+    printf("Server Sending File %s", directory_path.c_str());
+    string line;
+    ifstream myfile (directory_path.c_str());
+    if (myfile.is_open())
+    {
+        std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
+        int content_length = file_contents.length();
+        string header = getHeader(content_length);
+        server->WriteMessage(header + file_contents);
+        myfile.close();
+    }
+}
+
+void execture_head_command(WebServer *server, string directory_path)
+{
+    ifstream myfile (directory_path.c_str());
+    std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
+    int content_length = file_contents.length();
+    string response = getHeader(content_length);
+    server->WriteMessage(response);
+    myfile.close();
+}
+
 void routeMessage(string message, WebServer *server)
 {
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
@@ -108,26 +133,11 @@ void routeMessage(string message, WebServer *server)
 
     if(command == "GET")
     {
-      printf("Server Sending File %s", directory_path.c_str());
-      string line;
-      ifstream myfile (directory_path.c_str());
-      if (myfile.is_open())
-      {
-          std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
-          int content_length = file_contents.length();
-          string header = getHeader(content_length);
-          server->WriteMessage(header + file_contents);
-          myfile.close();
-      }
+        execture_get_command(server, directory_path);
     }
     if(command == "HEAD")
     {
-        ifstream myfile (directory_path.c_str());
-        std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
-        int content_length = file_contents.length();
-        string response = getHeader(content_length);
-        server->WriteMessage(response);
-        myfile.close();
+        execture_head_command(server, directory_path);
     }
     if(command == "PUT")
     {
