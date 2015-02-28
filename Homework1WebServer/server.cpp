@@ -13,6 +13,7 @@
 #include <boost/algorithm/string.hpp>
 #include <streambuf>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 using namespace std;
 //using namespace boost;
 
@@ -87,9 +88,10 @@ void routeMessage(string message, WebServer *server)
       directory = "/index.html";
     }
 
+    string directory_path = "html_root" + directory;
+
     if(command == "GET")
     {
-      string directory_path = "html_root" + directory;
       printf("Server Sending File %s", directory_path.c_str());
       string line;
       ifstream myfile (directory_path.c_str());
@@ -102,6 +104,17 @@ void routeMessage(string message, WebServer *server)
     }
     if(command == "HEAD")
     {
+        ifstream myfile (directory_path.c_str());
+        std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
+        int content_length = file_contents.length();
+        string response = "HTTP/1.0 200 OK\n";
+        response += "Server: simpleServer/1.0\n";
+        response += "Date: Mon, 13 Oct 2014 17:55:55 GMT\n";
+        response += "Content-type: text/html; charset=UTF-8\n";
+        string length_string = boost::lexical_cast<std::string>(content_length);
+        response += "Content-Length: " + length_string + "\n";
+        server->WriteMessage(response);
+        myfile.close();
     }
     if(command == "PUT")
     {

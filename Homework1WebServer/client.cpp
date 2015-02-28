@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
     aclient->Connect(ipAddress, portNumber);
     printf("\nCLENT: Sending Get Request\n");
 
+    aclient->SendRequest("HEAD / HTTP/1.0");
+    aclient->SendRequest("HEAD /large_file.html HTTP/1.0");
+    aclient->SendRequest("HEAD /missing_file.html HTTP/1.0");
+
     aclient->SendRequest("GET / HTTP/1.0");
     aclient->SendRequest("GET /large_file.html HTTP/1.0");
     aclient->SendRequest("GET /missing_file.html HTTP/1.0");
