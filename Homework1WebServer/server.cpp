@@ -14,6 +14,7 @@
 #include <streambuf>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include <time.h>
 using namespace std;
 //using namespace boost;
 
@@ -59,6 +60,21 @@ void *thread_start_server(void *context) {
     printf("\nSERVER: Web Server Destroyed.\n");
 }
 
+string getHeader(int content_length)
+{
+  string response = "HTTP/1.0 200 OK\n";
+  response += "Server: simpleServer/1.0\n";
+  char buf[1000];
+  time_t now = time(0);
+  struct tm tm = *gmtime(&now);
+  strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+  response += "Date: " + string(buf) + "\n";
+  response += "Content-type: text/html; charset=UTF-8\n";
+  string length_string = boost::lexical_cast<std::string>(content_length);
+  response += "Content-Length: " + length_string + "\n\n";
+  return response;
+}
+
 void routeMessage(string message, WebServer *server)
 {
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
@@ -98,7 +114,9 @@ void routeMessage(string message, WebServer *server)
       if (myfile.is_open())
       {
           std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
-          server->WriteMessage(file_contents);
+          int content_length = file_contents.length();
+          string header = getHeader(content_length);
+          server->WriteMessage(header + file_contents);
           myfile.close();
       }
     }
@@ -107,12 +125,7 @@ void routeMessage(string message, WebServer *server)
         ifstream myfile (directory_path.c_str());
         std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
         int content_length = file_contents.length();
-        string response = "HTTP/1.0 200 OK\n";
-        response += "Server: simpleServer/1.0\n";
-        response += "Date: Mon, 13 Oct 2014 17:55:55 GMT\n";
-        response += "Content-type: text/html; charset=UTF-8\n";
-        string length_string = boost::lexical_cast<std::string>(content_length);
-        response += "Content-Length: " + length_string + "\n";
+        string response = getHeader(content_length);
         server->WriteMessage(response);
         myfile.close();
     }
