@@ -75,7 +75,7 @@ string getHeader(int content_length)
   return response;
 }
 
-void execture_get_command(WebServer *server, string directory_path)
+void execute_get_command(WebServer *server, string directory_path)
 {
     printf("Server Sending File %s", directory_path.c_str());
     string line;
@@ -90,7 +90,32 @@ void execture_get_command(WebServer *server, string directory_path)
     }
 }
 
-void execture_head_command(WebServer *server, string directory_path)
+void remove_if_exists(string directory_path)
+{
+    ifstream ifile(directory_path.c_str());
+    if (ifile)
+    {
+        printf("Removing file: %s\n",directory_path.c_str());
+        remove(directory_path.c_str());
+    }
+}
+
+void execute_put_command(WebServer *server, string directory_path, string message_body)
+{
+    remove_if_exists(directory_path);
+    std::ofstream out(directory_path.c_str());
+    out << message_body;
+    out.close();
+    execute_get_command(server, string("html_root/file_created.html"));
+}
+
+void execute_delete_command(WebServer *server, string directory_path)
+{
+    remove_if_exists(directory_path);
+    execute_get_command(server, string("html_root/file_deleted.html"));
+}
+
+void execute_head_command(WebServer *server, string directory_path)
 {
     ifstream myfile (directory_path.c_str());
     std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
@@ -103,10 +128,19 @@ void execture_head_command(WebServer *server, string directory_path)
 void routeMessage(string message, WebServer *server)
 {
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
-
     vector <string> fields;
 
-    boost::split( fields, message, boost::is_any_of( " " ));
+    int first_return_index = message.find_first_of('\n');
+    string request_only = message.substr(0, first_return_index);
+    boost::split( fields, request_only, boost::is_any_of( " " ));
+
+    int header_end_index = message.find("\n\n",0);
+    string message_header = message.substr(0, header_end_index);
+    string message_body = "";
+    if(header_end_index <= message.length() + 2)
+    {
+      message_body = message.substr(header_end_index + 2, message.length());
+    }
 
     //TODO: Add error checking
 
@@ -122,7 +156,7 @@ void routeMessage(string message, WebServer *server)
     string version = fields2[1];
 
 
-    printf("command: '%s', directory: '%s', protocal: '%s', version: '%s'\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
+    printf("command: \e[92m'%s'\e[0m, directory: \e[92m'%s'\e[0m, protocal: \e[92m'%s'\e[0m, version: \e[92m'%s'\e[0m\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
 
     if(directory == "/")
     {
@@ -133,16 +167,18 @@ void routeMessage(string message, WebServer *server)
 
     if(command == "GET")
     {
-        execture_get_command(server, directory_path);
+        execute_get_command(server, directory_path);
     }
     if(command == "HEAD")
     {
-        execture_head_command(server, directory_path);
+        execute_head_command(server, directory_path);
     }
     if(command == "PUT")
     {
+        execute_put_command(server, directory_path, message_body);
     }
     if(command == "DELETE")
     {
+        execute_delete_command(server, directory_path);
     }
 }
