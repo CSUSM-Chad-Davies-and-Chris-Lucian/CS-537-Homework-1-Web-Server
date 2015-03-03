@@ -75,6 +75,13 @@ string getHeader(int content_length)
   return response;
 }
 
+void send_500_error_to_client(WebServer *server)
+{
+  string response = "HTTP/1.0 500 Internal Server Error\n";
+  server->WriteMessage(response);
+  server->CloseConnection();
+}
+
 void execute_get_command(WebServer *server, string directory_path)
 {
     printf("Server Sending File %s", directory_path.c_str());
@@ -142,6 +149,13 @@ void routeMessage(string message, WebServer *server)
       message_body = message.substr(header_end_index + 2, message.length());
     }
 
+    int size = fields.size();
+    if(size != 3)
+    {
+      send_500_error_to_client(server);
+      return;
+    }
+
     //TODO: Add error checking
 
     string command = fields[0];
@@ -152,8 +166,16 @@ void routeMessage(string message, WebServer *server)
 
     boost::split (fields2, protocal_version, boost::is_any_of("//"));
 
+    int size2 = fields2.size();
+    if(size2 != 2)
+    {
+      send_500_error_to_client(server);
+      return;
+    }
+
     string protocal = fields2[0];
     string version = fields2[1];
+
 
 
     printf("command: \e[92m'%s'\e[0m, directory: \e[92m'%s'\e[0m, protocal: \e[92m'%s'\e[0m, version: \e[92m'%s'\e[0m\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
@@ -162,6 +184,8 @@ void routeMessage(string message, WebServer *server)
     {
       directory = "/index.html";
     }
+
+
 
     string directory_path = "html_root" + directory;
 
@@ -180,5 +204,9 @@ void routeMessage(string message, WebServer *server)
     if(command == "DELETE")
     {
         execute_delete_command(server, directory_path);
+    }
+    if(version == "1.0")
+    {
+      server->CloseConnection();
     }
 }

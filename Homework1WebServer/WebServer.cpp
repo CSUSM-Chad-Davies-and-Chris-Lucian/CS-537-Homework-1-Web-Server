@@ -1,6 +1,7 @@
 #include "WebServer.h"
 
 struct readMessageParams{
+  int socketHandle;
   int socketConnection;
   void(*messageRoutingFunction)(string message, WebServer *server);
   WebServer* webServer;
@@ -54,38 +55,36 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             }
 
             struct readMessageParams params;
+            params.socketHandle = socketHandle;
             params.socketConnection = socketConnection;
             params.messageRoutingFunction = messageRoutingFunction;
             params.webServer = this;
             pthread_create(&thread_id, NULL, &ThreadReadMessage, (void *)&params);
         }
-        close(socketHandle);
     }
 }
 
 void *WebServer::ThreadReadMessage(void *context)
 {
-  while(1)
-  {
-      struct readMessageParams *params = ((struct readMessageParams *)context);
-      int socketConnection =params->socketConnection;
+  struct readMessageParams *params = ((struct readMessageParams *)context);
+  int socketConnection =params->socketConnection;
+  int socketHandle  = params->socketHandle;
 
-      int failedWhenNegative;
-      int sockfd;
-      char  buffer[4000];
-      bzero(buffer,4000);
-      failedWhenNegative = read(socketConnection,buffer,4000);
-      if (failedWhenNegative < 0) {
-          printf("Server Read Failed");
-          fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
-                  errno, strerror(errno));
-          close(sockfd);
-          return  NULL;
-      }
-
-      string message = string(buffer);
-      params->messageRoutingFunction(message, params->webServer);
+  int failedWhenNegative;
+  int sockfd;
+  char  buffer[4000];
+  bzero(buffer,4000);
+  failedWhenNegative = read(socketConnection,buffer,4000);
+  if (failedWhenNegative < 0) {
+      printf("Server Read Failed");
+      fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
+              errno, strerror(errno));
+      close(sockfd);
+      return  NULL;
   }
+
+  string message = string(buffer);
+  params->messageRoutingFunction(message, params->webServer);
 }
 
 void WebServer::WriteMessage(string message)
@@ -105,6 +104,11 @@ void WebServer::WriteMessage(string message)
   }
 }
 
+void WebServer::CloseConnection()
+{
+  close(socketHandle);
+}
+
 WebServer::~WebServer() {
-    //close(socketHandle);
+    close(socketHandle);
 }
