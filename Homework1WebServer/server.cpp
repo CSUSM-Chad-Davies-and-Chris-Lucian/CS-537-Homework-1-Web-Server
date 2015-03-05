@@ -77,9 +77,10 @@ string getHeader(int content_length)
 
 void send_500_error_to_client(WebServer *server)
 {
+  cout << "Server sending error to client 500" << endl;
   string response = "HTTP/1.0 500 Internal Server Error\n";
   server->WriteMessage(response);
-  server->CloseConnection();
+  //server->CloseConnection();
 }
 
 void execute_get_command(WebServer *server, string directory_path)
@@ -94,6 +95,10 @@ void execute_get_command(WebServer *server, string directory_path)
         string header = getHeader(content_length);
         server->WriteMessage(header + file_contents);
         myfile.close();
+    }
+    else
+    {
+      send_500_error_to_client(server);
     }
 }
 
@@ -155,8 +160,6 @@ void routeMessage(string message, WebServer *server)
       send_500_error_to_client(server);
       return;
     }
-
-    //TODO: Add error checking
 
     string command = fields[0];
     string directory = fields[1];

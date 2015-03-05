@@ -49,6 +49,7 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
               (struct sockaddr *) &client_address, &client_length);
             if(socketConnection < 0)
             {
+                cout << "SERVER Socket connection less than 0" << endl;
                 fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
                         errno, strerror(errno));
                 return;
@@ -110,5 +111,4 @@ void WebServer::CloseConnection()
 }
 
 WebServer::~WebServer() {
-    close(socketHandle);
 }
