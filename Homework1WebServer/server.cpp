@@ -60,9 +60,9 @@ void *thread_start_server(void *context) {
     printf("\nSERVER: Web Server Destroyed.\n");
 }
 
-string getHeader(int content_length)
+string getHeader(int content_length, string version)
 {
-  string response = "HTTP/1.0 200 OK\n";
+  string response = "HTTP/" + version + " 200 OK\n";
   response += "Server: simpleServer/1.0\n";
   char buf[1000];
   time_t now = time(0);
@@ -75,15 +75,15 @@ string getHeader(int content_length)
   return response;
 }
 
-void send_500_error_to_client(WebServer *server)
+void send_500_error_to_client(WebServer *server, string version)
 {
   cout << "Server sending error to client 500" << endl;
-  string response = "HTTP/1.0 500 Internal Server Error\n";
+  string response = "HTTP/" + version + " 500 Internal Server Error\n";
   server->WriteMessage(response);
   //server->CloseConnection();
 }
 
-void execute_get_command(WebServer *server, string directory_path)
+void execute_get_command(WebServer *server, string directory_path, string version)
 {
     printf("Server Sending File %s", directory_path.c_str());
     string line;
@@ -92,13 +92,13 @@ void execute_get_command(WebServer *server, string directory_path)
     {
         std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
         int content_length = file_contents.length();
-        string header = getHeader(content_length);
+        string header = getHeader(content_length, version);
         server->WriteMessage(header + file_contents);
         myfile.close();
     }
     else
     {
-      send_500_error_to_client(server);
+      send_500_error_to_client(server, version);
     }
 }
 
@@ -112,27 +112,27 @@ void remove_if_exists(string directory_path)
     }
 }
 
-void execute_put_command(WebServer *server, string directory_path, string message_body)
+void execute_put_command(WebServer *server, string directory_path, string message_body, string version)
 {
     remove_if_exists(directory_path);
     std::ofstream out(directory_path.c_str());
     out << message_body;
     out.close();
-    execute_get_command(server, string("html_root/file_created.html"));
+    execute_get_command(server, string("html_root/file_created.html"), version);
 }
 
-void execute_delete_command(WebServer *server, string directory_path)
+void execute_delete_command(WebServer *server, string directory_path, string version)
 {
     remove_if_exists(directory_path);
-    execute_get_command(server, string("html_root/file_deleted.html"));
+    execute_get_command(server, string("html_root/file_deleted.html"), version);
 }
 
-void execute_head_command(WebServer *server, string directory_path)
+void execute_head_command(WebServer *server, string directory_path, string version)
 {
     ifstream myfile (directory_path.c_str());
     std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
     int content_length = file_contents.length();
-    string response = getHeader(content_length);
+    string response = getHeader(content_length, version);
     server->WriteMessage(response);
     myfile.close();
 }
@@ -157,7 +157,7 @@ void routeMessage(string message, WebServer *server)
     int size = fields.size();
     if(size != 3)
     {
-      send_500_error_to_client(server);
+      send_500_error_to_client(server, "1.1");
       return;
     }
 
@@ -172,16 +172,14 @@ void routeMessage(string message, WebServer *server)
     int size2 = fields2.size();
     if(size2 != 2)
     {
-      send_500_error_to_client(server);
+      send_500_error_to_client(server, "1.1");
       return;
     }
 
     string protocal = fields2[0];
-    string version = fields2[1];
+    string version = fields2[1].substr(0,3);
 
-
-
-    printf("command: \e[92m'%s'\e[0m, directory: \e[92m'%s'\e[0m, protocal: \e[92m'%s'\e[0m, version: \e[92m'%s'\e[0m\n", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
+    printf("command: \e[92m'%s'\e[0m, directory: \e[92m'%s'\e[0m, protocal: \e[92m'%s'\e[0m, version: \e[92m'%s'\e[0m \n ", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
 
     if(directory == "/")
     {
@@ -194,19 +192,19 @@ void routeMessage(string message, WebServer *server)
 
     if(command == "GET")
     {
-        execute_get_command(server, directory_path);
+        execute_get_command(server, directory_path, version);
     }
     if(command == "HEAD")
     {
-        execute_head_command(server, directory_path);
+        execute_head_command(server, directory_path, version);
     }
     if(command == "PUT")
     {
-        execute_put_command(server, directory_path, message_body);
+        execute_put_command(server, directory_path, message_body, version);
     }
     if(command == "DELETE")
     {
-        execute_delete_command(server, directory_path);
+        execute_delete_command(server, directory_path, version);
     }
     if(version == "1.0")
     {
