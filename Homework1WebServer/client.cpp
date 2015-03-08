@@ -1,18 +1,33 @@
-#include<stdio.h>
-#include<string.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include "WebServer.h"
 #include "WebClient.h"
 #include <pthread.h>
 #include <string>
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <unistd.h>
+
 using namespace std;
+
+void Call_Client(string ipAddress, string portNumber, string version);
+void Call_Telnet(string ipAddress, string portNumber, string version);
 
 struct connectionParams{
     string IPAddress;
     string PortNumber;
 };
+
+double diffclock( clock_t clock1, clock_t clock2 ) {
+
+       double diffticks = clock1 - clock2;
+       double diffms    = diffticks / ( CLOCKS_PER_SEC / 1000 );
+
+       return diffms;
+   }
 
 int main(int argc, char *argv[]) {
 
@@ -25,22 +40,50 @@ int main(int argc, char *argv[]) {
     string ipAddress = argv[1];
     string portNumber = argv[2];
 
+    clock_t start = clock();
 
-    printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
-    WebClient* aclient = new WebClient();
-    printf("\nCLENT: Connecting To Server\n");
-    aclient->Connect(ipAddress, portNumber);
-    printf("\nCLENT: Sending Get Request\n");
 
-    aclient->SendRequest("HEAD / HTTP/1.0");
-    //aclient->SendRequest("HEAD /large_file.html HTTP/1.0");
-    //aclient->SendRequest("HEAD /missing_file.html HTTP/1.0");
+    Call_Client(ipAddress, portNumber, "1.0");
+    //Call_Telnet(ipAddress, portNumber, "1.0");
 
-    aclient->SendRequest("GET / HTTP/1.0");
-    //aclient->SendRequest("GET /large_file.html HTTP/1.0");
-    //aclient->SendRequest("GET /missing_file.html HTTP/1.0");
+    clock_t end = clock();
 
-    string put_request = "PUT /stuff.html HTTP/1.0\n";
+    printf("diffclock: %f", diffclock( start, end ));
+
+    //Call_Client(ipAddress, portNumber, "1.0");
+
+    return 0;
+}
+
+void Call_Telnet(string ipAddress, string portNumber, string version)
+{
+  string command = "telnet " + ipAddress + " " + portNumber;
+
+  system(command.c_str());
+  //system("GET / HTTP/1.0");
+}
+
+void Call_Client(string ipAddress, string portNumber, string version)
+{
+  printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
+  WebClient* aclient = new WebClient();
+  printf("\nCLENT: Connecting To Server\n");
+  aclient->Connect(ipAddress, portNumber, version);
+  printf("\nCLENT: Sending Get Request\n");
+
+  for(int i = 0; i < 100; i++)
+  {
+    printf ("i: %d", i);
+    aclient->SendRequest("HEAD / HTTP/" + version);
+
+    //aclient->SendRequest("HEAD /large_file.html HTTP/" + version);
+    aclient->SendRequest("HEAD /missing_file.html HTTP/" + version);
+
+    aclient->SendRequest("GET / HTTP/" + version);
+    //aclient->SendRequest("GET /large_file.html HTTP/" + version);
+    aclient->SendRequest("GET /missing_file.html HTTP/" + version);
+
+    string put_request = "PUT /stuff.html HTTP/" + version + "\n";
     put_request += "User-Agent: SomeClient 1.0\n";
     put_request += "Host: "+ ipAddress+":" + portNumber + "\n";
     put_request += "Accept: */*\n";
@@ -49,13 +92,13 @@ int main(int argc, char *argv[]) {
     put_request += "Put Command Contents For File.";
     aclient->SendRequest(put_request);
 
-    aclient->SendRequest("GET /stuff.html HTTP/1.0");
+    aclient->SendRequest("GET /stuff.html HTTP/" + version);
 
-    aclient->SendRequest("DELETE /stuff.html HTTP/1.0");
+    aclient->SendRequest("DELETE /stuff.html HTTP/" + version);
 
-    aclient->SendRequest("GET /stuff.html HTTP/1.0");
+    aclient->SendRequest("GET /stuff.html HTTP/" + version);
 
-    printf("\nCLENT: Request Finished. Destroying Client\n");
-    aclient->~WebClient();
-    return 0;
+  }
+  printf("\nCLENT: Request Finished. Destroying Client\n");
+  aclient->~WebClient();
 }

@@ -20,6 +20,9 @@ using namespace std;
 
 void* thread_start_server(void *context);
 void routeMessage(string message, WebServer *server);
+void send_404_error_to_client(WebServer *server, string version);
+string getHeader(int content_length, string version, string status);
+void execute_get_command(WebServer *server, string directory_path, string version, string status);
 
 struct connectionParams{
     string IPAddress;
@@ -62,7 +65,12 @@ void *thread_start_server(void *context) {
 
 string getHeader(int content_length, string version)
 {
-  string response = "HTTP/" + version + " 200 OK\n";
+  return (getHeader(content_length, version, string("200 OK")));
+}
+
+string getHeader(int content_length, string version, string status)
+{
+  string response = "HTTP/" + version + " " + status +"\n";
   response += "Server: simpleServer/1.0\n";
   char buf[1000];
   time_t now = time(0);
@@ -80,10 +88,14 @@ void send_500_error_to_client(WebServer *server, string version)
   cout << "Server sending error to client 500" << endl;
   string response = "HTTP/" + version + " 500 Internal Server Error\n";
   server->WriteMessage(response);
-  //server->CloseConnection();
 }
 
 void execute_get_command(WebServer *server, string directory_path, string version)
+{
+  return (execute_get_command(server, directory_path, version, "200 OK"));
+}
+
+void execute_get_command(WebServer *server, string directory_path, string version, string status)
 {
     printf("Server Sending File %s", directory_path.c_str());
     string line;
@@ -92,14 +104,19 @@ void execute_get_command(WebServer *server, string directory_path, string versio
     {
         std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
         int content_length = file_contents.length();
-        string header = getHeader(content_length, version);
-        server->WriteMessage(header + file_contents);
+        string header = getHeader(content_length, version, status);
+        server->WriteMessage(header + file_contents + "\n\0");
         myfile.close();
     }
     else
     {
-      send_500_error_to_client(server, version);
+      send_404_error_to_client(server, version);
     }
+}
+
+void send_404_error_to_client(WebServer *server, string version)
+{
+  execute_get_command(server, string("html_root/file_not_found.html"), string("404 Not Found"));
 }
 
 void remove_if_exists(string directory_path)
@@ -157,6 +174,7 @@ void routeMessage(string message, WebServer *server)
     int size = fields.size();
     if(size != 3)
     {
+      cout << "p1" << endl;
       send_500_error_to_client(server, "1.1");
       return;
     }
@@ -172,6 +190,7 @@ void routeMessage(string message, WebServer *server)
     int size2 = fields2.size();
     if(size2 != 2)
     {
+      cout << "p2" << endl;
       send_500_error_to_client(server, "1.1");
       return;
     }

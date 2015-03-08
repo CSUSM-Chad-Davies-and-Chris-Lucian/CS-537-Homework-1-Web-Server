@@ -33,7 +33,7 @@ WebServer::WebServer(string portNumer) {
         return;
     }
 
-    listen(socketHandle,1);
+    listen(socketHandle,100);
 }
 
 void WebServer::StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer)){
@@ -47,12 +47,17 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             client_length = sizeof(client_address);
             socketConnection = accept(socketHandle,
               (struct sockaddr *) &client_address, &client_length);
+
+            //printf ("=================================socketconnection: %d", socketConnection);
+
             if(socketConnection < 0)
             {
-                cout << "SERVER Socket connection less than 0" << endl;
-                fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
-                        errno, strerror(errno));
-                return;
+                sleep(2);
+                //cout << "SERVER Socket connection less than 0" << endl;
+                //fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
+                //        errno, strerror(errno));
+                //close(socketHandle);
+                //return;
             }
 
             struct readMessageParams params;
@@ -67,25 +72,24 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
 
 void *WebServer::ThreadReadMessage(void *context)
 {
-  struct readMessageParams *params = ((struct readMessageParams *)context);
-  int socketConnection =params->socketConnection;
-  int socketHandle  = params->socketHandle;
+  while(1)
+  {
+    struct readMessageParams *params = ((struct readMessageParams *)context);
+    int socketConnection =params->socketConnection;
+    int socketHandle  = params->socketHandle;
 
-  int failedWhenNegative;
-  int sockfd;
-  char  buffer[4000];
-  bzero(buffer,4000);
-  failedWhenNegative = read(socketConnection,buffer,4000);
-  if (failedWhenNegative < 0) {
-      printf("Server Read Failed");
-      fprintf(stderr, "Error reading from socket, errno = %d (%s)\n",
-              errno, strerror(errno));
-      close(sockfd);
-      return  NULL;
+    int failedWhenNegative;
+    char  buffer[4000];
+    bzero(buffer,4000);
+    failedWhenNegative = read(socketConnection,buffer,4000);
+    if (failedWhenNegative <= 0) {
+        close(socketConnection);
+        return  NULL;
+    }
+
+    string message = string(buffer);
+    params->messageRoutingFunction(message, params->webServer);
   }
-
-  string message = string(buffer);
-  params->messageRoutingFunction(message, params->webServer);
 }
 
 void WebServer::WriteMessage(string message)
@@ -101,13 +105,19 @@ void WebServer::WriteMessage(string message)
       printf("Server Write Failed");
       fprintf(stderr, "Error writing to socket, errno = %d (%s)\n",
               errno, strerror(errno));
-      close(socketHandle);
+      close(socketConnection);
   }
 }
 
 void WebServer::CloseConnection()
 {
-  close(socketHandle);
+  printf("\n\n\n\n\nclosed###########################\n\n\n\n\n");
+
+  shutdown(socketConnection, SHUT_RDWR);
+
+  char buffer[200];
+  while(read(socketConnection, buffer, 200) > 0);
+  close(socketConnection);
 }
 
 WebServer::~WebServer() {

@@ -14,10 +14,6 @@ int main(int argc, char *argv[]) {
     system("ps | grep server | awk '{print $1}' | xargs kill");
     system("ps | grep client | awk '{print $1}' | xargs kill");
 
-    if(getlogin() == "davie009")
-    {
-      port1 = "65037";
-    }
     printf("getlogin_r %s", getlogin());
 
     printf("\nTESTS: Starting Server App\n");
@@ -30,7 +26,7 @@ int main(int argc, char *argv[]) {
     for (size_t index = 0; index < 1; index++) {
         printf("\nTESTS: Starting Client App %d\n",index);
 
-        string command2 = "./client 127.0.0.1 " + port1 + " &";
+        string command2 = "./client localhost " + port1 + " &";
 
         system(command2.c_str());
     }
