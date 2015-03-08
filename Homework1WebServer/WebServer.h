@@ -22,14 +22,13 @@ using namespace std;
 class WebServer {
 public:
     WebServer(string portNumer);
-    void StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer));
+    void StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer, int socketConnection));
     static void *ThreadReadMessage(void *context);
-    void WriteMessage(string message);
-    void CloseConnection();
+    void WriteMessage(string message, int socketConnection);
+    static void CloseConnection(int socketConnection);
     virtual ~WebServer();
 private:
     int socketHandle;
-    int socketConnection;
     struct sockaddr_in socketInfo;
 };
 

@@ -19,10 +19,10 @@ using namespace std;
 //using namespace boost;
 
 void* thread_start_server(void *context);
-void routeMessage(string message, WebServer *server);
-void send_404_error_to_client(WebServer *server, string version);
-string getHeader(int content_length, string version, string status);
-void execute_get_command(WebServer *server, string directory_path, string version, string status);
+void routeMessage(string message, WebServer *server, int socketConnection);
+void send_404_error_to_client(WebServer *server, string version, int socketConnection);
+string getHeader(int content_length, string version, string status, int socketConnection);
+void execute_get_command(WebServer *server, string directory_path, string version, string status, int socketConnection);
 
 struct connectionParams{
     string IPAddress;
@@ -63,12 +63,12 @@ void *thread_start_server(void *context) {
     printf("\nSERVER: Web Server Destroyed.\n");
 }
 
-string getHeader(int content_length, string version)
+string getHeader(int content_length, string version, int socketConnection)
 {
-  return (getHeader(content_length, version, string("200 OK")));
+  return (getHeader(content_length, version, string("200 OK"), socketConnection));
 }
 
-string getHeader(int content_length, string version, string status)
+string getHeader(int content_length, string version, string status, int socketConnection)
 {
   string response = "HTTP/" + version + " " + status +"\n";
   response += "Server: simpleServer/1.0\n";
@@ -83,19 +83,19 @@ string getHeader(int content_length, string version, string status)
   return response;
 }
 
-void send_500_error_to_client(WebServer *server, string version)
+void send_500_error_to_client(WebServer *server, string version, int socketConnection)
 {
   cout << "Server sending error to client 500" << endl;
   string response = "HTTP/" + version + " 500 Internal Server Error\n";
-  server->WriteMessage(response);
+  server->WriteMessage(response, socketConnection);
 }
 
-void execute_get_command(WebServer *server, string directory_path, string version)
+void execute_get_command(WebServer *server, string directory_path, string version, int socketConnection)
 {
-  return (execute_get_command(server, directory_path, version, "200 OK"));
+  return (execute_get_command(server, directory_path, version, "200 OK", socketConnection));
 }
 
-void execute_get_command(WebServer *server, string directory_path, string version, string status)
+void execute_get_command(WebServer *server, string directory_path, string version, string status, int socketConnection)
 {
     printf("Server Sending File %s", directory_path.c_str());
     string line;
@@ -104,19 +104,19 @@ void execute_get_command(WebServer *server, string directory_path, string versio
     {
         std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
         int content_length = file_contents.length();
-        string header = getHeader(content_length, version, status);
-        server->WriteMessage(header + file_contents + "\n\0");
+        string header = getHeader(content_length, version, status, socketConnection);
+        server->WriteMessage(header + file_contents + "\n\0", socketConnection);
         myfile.close();
     }
     else
     {
-      send_404_error_to_client(server, version);
+      send_404_error_to_client(server, version, socketConnection);
     }
 }
 
-void send_404_error_to_client(WebServer *server, string version)
+void send_404_error_to_client(WebServer *server, string version, int socketConnection)
 {
-  execute_get_command(server, string("html_root/file_not_found.html"), string("404 Not Found"));
+  execute_get_command(server, string("html_root/file_not_found.html"), string("404 Not Found"), socketConnection);
 }
 
 void remove_if_exists(string directory_path)
@@ -129,32 +129,32 @@ void remove_if_exists(string directory_path)
     }
 }
 
-void execute_put_command(WebServer *server, string directory_path, string message_body, string version)
+void execute_put_command(WebServer *server, string directory_path, string message_body, string version, int socketConnection)
 {
     remove_if_exists(directory_path);
     std::ofstream out(directory_path.c_str());
     out << message_body;
     out.close();
-    execute_get_command(server, string("html_root/file_created.html"), version);
+    execute_get_command(server, string("html_root/file_created.html"), version, socketConnection);
 }
 
-void execute_delete_command(WebServer *server, string directory_path, string version)
+void execute_delete_command(WebServer *server, string directory_path, string version, int socketConnection)
 {
     remove_if_exists(directory_path);
-    execute_get_command(server, string("html_root/file_deleted.html"), version);
+    execute_get_command(server, string("html_root/file_deleted.html"), version, socketConnection);
 }
 
-void execute_head_command(WebServer *server, string directory_path, string version)
+void execute_head_command(WebServer *server, string directory_path, string version, int socketConnection)
 {
     ifstream myfile (directory_path.c_str());
     std::string file_contents((std::istreambuf_iterator<char>(myfile)), std::istreambuf_iterator<char>());
     int content_length = file_contents.length();
-    string response = getHeader(content_length, version);
-    server->WriteMessage(response);
+    string response = getHeader(content_length, version, socketConnection);
+    server->WriteMessage(response, socketConnection);
     myfile.close();
 }
 
-void routeMessage(string message, WebServer *server)
+void routeMessage(string message, WebServer *server, int socketConnection)
 {
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
     vector <string> fields;
@@ -175,7 +175,7 @@ void routeMessage(string message, WebServer *server)
     if(size != 3)
     {
       cout << "p1" << endl;
-      send_500_error_to_client(server, "1.1");
+      send_500_error_to_client(server, "1.1", socketConnection);
       return;
     }
 
@@ -191,7 +191,7 @@ void routeMessage(string message, WebServer *server)
     if(size2 != 2)
     {
       cout << "p2" << endl;
-      send_500_error_to_client(server, "1.1");
+      send_500_error_to_client(server, "1.1", socketConnection);
       return;
     }
 
@@ -211,22 +211,23 @@ void routeMessage(string message, WebServer *server)
 
     if(command == "GET")
     {
-        execute_get_command(server, directory_path, version);
+        execute_get_command(server, directory_path, version, socketConnection);
     }
     if(command == "HEAD")
     {
-        execute_head_command(server, directory_path, version);
+        execute_head_command(server, directory_path, version, socketConnection);
     }
     if(command == "PUT")
     {
-        execute_put_command(server, directory_path, message_body, version);
+        execute_put_command(server, directory_path, message_body, version, socketConnection);
     }
     if(command == "DELETE")
     {
-        execute_delete_command(server, directory_path, version);
+        execute_delete_command(server, directory_path, version, socketConnection);
     }
     if(version == "1.0")
     {
-      server->CloseConnection();
+      printf ("\nend connection 1.0 %d", socketConnection);
+      server->CloseConnection(socketConnection);
     }
 }

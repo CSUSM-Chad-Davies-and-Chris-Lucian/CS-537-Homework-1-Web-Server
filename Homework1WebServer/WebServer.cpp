@@ -3,7 +3,7 @@
 struct readMessageParams{
   int socketHandle;
   int socketConnection;
-  void(*messageRoutingFunction)(string message, WebServer *server);
+  void(*messageRoutingFunction)(string message, WebServer *server, int socketConnection);
   WebServer* webServer;
 };
 
@@ -36,7 +36,7 @@ WebServer::WebServer(string portNumer) {
     listen(socketHandle,100);
 }
 
-void WebServer::StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer)){
+void WebServer::StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer, int socketConnection)){
     if(socketHandle >= 0)
     {
         pthread_t thread_id;
@@ -45,7 +45,7 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             socklen_t client_length;
             struct sockaddr_in client_address;
             client_length = sizeof(client_address);
-            socketConnection = accept(socketHandle,
+            int socketConnection = accept(socketHandle,
               (struct sockaddr *) &client_address, &client_length);
 
             //printf ("=================================socketconnection: %d", socketConnection);
@@ -59,13 +59,15 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
                 //close(socketHandle);
                 //return;
             }
-
-            struct readMessageParams params;
-            params.socketHandle = socketHandle;
-            params.socketConnection = socketConnection;
-            params.messageRoutingFunction = messageRoutingFunction;
-            params.webServer = this;
-            pthread_create(&thread_id, NULL, &ThreadReadMessage, (void *)&params);
+            else
+            {
+              struct readMessageParams params;
+              params.socketHandle = socketHandle;
+              params.socketConnection = socketConnection;
+              params.messageRoutingFunction = messageRoutingFunction;
+              params.webServer = this;
+              pthread_create(&thread_id, NULL, &ThreadReadMessage, (void *)&params);
+            }
         }
     }
 }
@@ -82,17 +84,18 @@ void *WebServer::ThreadReadMessage(void *context)
     char  buffer[4000];
     bzero(buffer,4000);
     failedWhenNegative = read(socketConnection,buffer,4000);
-    if (failedWhenNegative <= 0) {
-        close(socketConnection);
+    if (failedWhenNegative < 0) {
+        printf ("\nreadfailed %d", socketConnection);
+        CloseConnection(socketConnection);
         return  NULL;
     }
 
     string message = string(buffer);
-    params->messageRoutingFunction(message, params->webServer);
+    params->messageRoutingFunction(message, params->webServer, socketConnection);
   }
 }
 
-void WebServer::WriteMessage(string message)
+void WebServer::WriteMessage(string message, int socketConnection)
 {
   int length = message.length();
   char  buffer[length];
@@ -105,13 +108,16 @@ void WebServer::WriteMessage(string message)
       printf("Server Write Failed");
       fprintf(stderr, "Error writing to socket, errno = %d (%s)\n",
               errno, strerror(errno));
-      close(socketConnection);
+      printf ("\nwritefailed %d", socketConnection);
+      CloseConnection(socketConnection);
+      return;
   }
 }
 
-void WebServer::CloseConnection()
+void WebServer::CloseConnection(int socketConnection)
 {
-  printf("\n\n\n\n\nclosed###########################\n\n\n\n\n");
+  printf("\n\n\n\n\nclosed#########%d##################\n\n\n\n\n", socketConnection);
+
 
   shutdown(socketConnection, SHUT_RDWR);
 

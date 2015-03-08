@@ -92,8 +92,6 @@ void WebClient::SendRequest(string request){
 
     printf("%s\n",result.c_str());
 
-
-    usleep(20000);
     if(version == "1.0")
     {
       close(socketHandle);

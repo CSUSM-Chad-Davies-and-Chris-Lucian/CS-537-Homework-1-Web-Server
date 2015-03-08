@@ -65,14 +65,14 @@ void Call_Telnet(string ipAddress, string portNumber, string version)
 
 void Call_Client(string ipAddress, string portNumber, string version)
 {
-  printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
-  WebClient* aclient = new WebClient();
-  printf("\nCLENT: Connecting To Server\n");
-  aclient->Connect(ipAddress, portNumber, version);
-  printf("\nCLENT: Sending Get Request\n");
-
   for(int i = 0; i < 100; i++)
   {
+    printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
+    WebClient* aclient = new WebClient();
+    printf("\nCLENT: Connecting To Server\n");
+    aclient->Connect(ipAddress, portNumber, version);
+    printf("\nCLENT: Sending Get Request\n");
+
     printf ("i: %d", i);
     aclient->SendRequest("HEAD / HTTP/" + version);
 
@@ -98,7 +98,7 @@ void Call_Client(string ipAddress, string portNumber, string version)
 
     aclient->SendRequest("GET /stuff.html HTTP/" + version);
 
+    printf("\nCLENT: Request Finished. Destroying Client\n");
+    aclient->~WebClient();
   }
-  printf("\nCLENT: Request Finished. Destroying Client\n");
-  aclient->~WebClient();
 }
