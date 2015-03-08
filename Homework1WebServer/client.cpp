@@ -65,23 +65,32 @@ void Call_Telnet(string ipAddress, string portNumber, string version)
 
 void Call_Client(string ipAddress, string portNumber, string version)
 {
+  printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
+  WebClient* aclient = new WebClient();
+  printf("\nCLENT: Connecting To Server\n");
+  aclient->Connect(ipAddress, portNumber, version);
+  printf("\nCLENT: Sending Get Request\n");
+
   for(int i = 0; i < 100; i++)
   {
-    printf("CLIENT: Client Connecting to Web Server at IP:%s Port:%s", ipAddress.c_str(), portNumber.c_str());
-    WebClient* aclient = new WebClient();
-    printf("\nCLENT: Connecting To Server\n");
-    aclient->Connect(ipAddress, portNumber, version);
-    printf("\nCLENT: Sending Get Request\n");
+    int duration = 1000000;
 
     printf ("i: %d", i);
     aclient->SendRequest("HEAD / HTTP/" + version);
+    usleep(duration);
 
-    //aclient->SendRequest("HEAD /large_file.html HTTP/" + version);
+    aclient->SendRequest("HEAD /large_file.html HTTP/" + version);
+    usleep(duration);
+
     aclient->SendRequest("HEAD /missing_file.html HTTP/" + version);
+    usleep(duration);
 
     aclient->SendRequest("GET / HTTP/" + version);
-    //aclient->SendRequest("GET /large_file.html HTTP/" + version);
+    usleep(duration);
+    aclient->SendRequest("GET /large_file.html HTTP/" + version);
+    usleep(duration);
     aclient->SendRequest("GET /missing_file.html HTTP/" + version);
+    usleep(duration);
 
     string put_request = "PUT /stuff.html HTTP/" + version + "\n";
     put_request += "User-Agent: SomeClient 1.0\n";
@@ -91,14 +100,16 @@ void Call_Client(string ipAddress, string portNumber, string version)
     put_request += "Content-Length:14\n\n";
     put_request += "Put Command Contents For File.";
     aclient->SendRequest(put_request);
+    usleep(duration);
 
     aclient->SendRequest("GET /stuff.html HTTP/" + version);
-
+    usleep(duration);
     aclient->SendRequest("DELETE /stuff.html HTTP/" + version);
-
+    usleep(duration);
     aclient->SendRequest("GET /stuff.html HTTP/" + version);
 
-    printf("\nCLENT: Request Finished. Destroying Client\n");
-    aclient->~WebClient();
+    usleep(duration);
   }
+  printf("\nCLENT: Request Finished. Destroying Client\n");
+  aclient->~WebClient();
 }
