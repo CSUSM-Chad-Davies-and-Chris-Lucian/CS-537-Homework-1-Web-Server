@@ -78,7 +78,7 @@ void Call_Client(string ipAddress, string portNumber, string version)
   {
     int duration = 0;
 
-    printf ("i: %d\n", i);
+    printf ("\nNum of Runs: %d\n", i);
     aclient->SendRequest("HEAD / HTTP/" + version);
     usleep(duration);
 

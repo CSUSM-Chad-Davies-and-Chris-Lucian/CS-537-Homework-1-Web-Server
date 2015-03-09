@@ -47,32 +47,20 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             socklen_t client_length;
             struct sockaddr_in client_address;
             client_length = sizeof(client_address);
-            cout << "41" << endl;
             int socketConnection = accept(socketHandle,
               (struct sockaddr *) &client_address, &client_length);
-            cout << "42" << endl;
 
-            //printf ("=================================socketconnection: %d", socketConnection);
-            cout << "43" << endl;
             if(socketConnection < 0)
             {
-              cout << "44" << endl;
                 sleep(2);
-                //cout << "SERVER Socket connection less than 0" << endl;
-                //fprintf(stderr, "Error accepting socket connection request, errno = %d (%s) \n",
-                //        errno, strerror(errno));
-                //close(socketHandle);
-                //return;
             }
             else
             {
-              cout << "45" << endl;
               struct readMessageParams params;
               params.socketHandle = socketHandle;
               params.socketConnection = socketConnection;
               params.messageRoutingFunction = messageRoutingFunction;
               params.webServer = this;
-              cout << "46" << endl;
 
               if(startJoining)
               {
@@ -87,18 +75,13 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
               }
 
               threadIncrement = (threadIncrement+1) % 10;
-
-              cout << "x: " << x << endl;
-              cout << "47" << endl;
             }
-            cout << "48" << endl;
         }
     }
 }
 
 void *WebServer::ThreadReadMessage(void *context)
 {
-  cout << "49" << endl;
   while(1)
   {
     struct readMessageParams *params = ((struct readMessageParams *)context);
@@ -108,20 +91,16 @@ void *WebServer::ThreadReadMessage(void *context)
     int failedWhenNegative;
     char  buffer[4000];
     bzero(buffer,4000);
-    cout << "50" << endl;
     failedWhenNegative = read(socketConnection,buffer,4000);
-    cout << "51" << endl;
-    if (failedWhenNegative < 0) {
-        printf ("\nreadfailed %d", socketConnection);
+    if (failedWhenNegative < 0)
+    {
         CloseConnection(socketConnection);
         return  NULL;
     }
 
     string message = string(buffer);
-    cout << "52" << endl;
     params->messageRoutingFunction(message, params->webServer, socketConnection);
   }
-  cout << "53" << endl;
 }
 
 void WebServer::WriteMessage(string message, int socketConnection)
@@ -145,18 +124,12 @@ void WebServer::WriteMessage(string message, int socketConnection)
 
 void WebServer::CloseConnection(int socketConnection)
 {
-  cout << "calling it!!!" << endl;
-  printf("\n\n\n\n\nclosed#########%d##################\n\n\n\n\n", socketConnection);
-
-
   shutdown(socketConnection, SHUT_RDWR);
 
   char buffer[200];
   while(read(socketConnection, buffer, 200) > 0);
   close(socketConnection);
-  cout << "before pthread die" << endl;
   pthread_exit(NULL);
-  cout << "after pthread die" << endl;
 }
 
 WebServer::~WebServer() {

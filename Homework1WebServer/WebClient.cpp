@@ -51,68 +51,41 @@ void WebClient::SendRequest(string request){
     char buffer[size];
     bzero(buffer,size);
     printf("Client Sending Request %s\n", request.c_str());
-    cout << "21" << endl;
+
     strcpy(buffer, request.c_str());
     int failedWhenNegative = write(socketHandle, buffer, request.length());
 
-    cout << "22" << endl;
-    if (failedWhenNegative < 0)  {
-      cout << "23" << endl;
+    if (failedWhenNegative < 0)
+    {
+
         printf("Client Read Failed");
         fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
                 errno, strerror(errno));
         return;
     }
-    cout << "24" << endl;
+
+
     string result;
     int bytes_read = 0;
     int total_to_read = size;
 
-    cout << "24" << endl;
-    //do
-    //{
-      bzero(buffer,size);
-      cout << "25" << endl;
-      printf("beging do while");
-      cout << "26" << endl;
-      bytes_read = read(socketHandle,buffer,total_to_read);
-      cout << "27" << endl;
-      if (bytes_read < 0)  {
-        cout << "28" << endl;
-          printf("Client Write Failed");
-          fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
-                  errno, strerror(errno));
-          return;
-      }
-      cout << "29" << endl;
-      total_to_read -= bytes_read;
-      printf("end do while %s", result.c_str());
-      result = result + string(buffer);
-      cout << "30" << endl;
+    bzero(buffer,size);
+    bytes_read = read(socketHandle,buffer,total_to_read);
 
-      if(result.find("Content-Length:") != std::string::npos)
-      {
-        cout << "31" << endl;
-        printf ("find if worked");
-      }
-      else
-      {
-        cout << "32" << endl;
-        printf ("find if didn't work");
-      }
+    if (bytes_read < 0)
+    {
+        printf("Client Write Failed");
+        fprintf(stderr, "Error reading from socket, errno = %d (%s) \n",
+                errno, strerror(errno));
+        return;
+    }
+    total_to_read -= bytes_read;
+    result = result + string(buffer);
 
-    //}while(result.find("Content-Length:") != std::string::npos);
-
-    cout << "33" << endl;
-    printf("%s\n",result.c_str());
-
-    cout << "34" << endl;
     if(version == "1.0")
     {
-      cout << "36" << endl;
       close(socketHandle);
     }
-    cout << "35" << endl;
 }
 
 WebClient::~WebClient() {
