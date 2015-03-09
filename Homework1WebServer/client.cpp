@@ -10,6 +10,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <unistd.h>
+#include <time.h>
 
 using namespace std;
 
@@ -21,13 +22,20 @@ struct connectionParams{
     string PortNumber;
 };
 
-double diffclock( clock_t clock1, clock_t clock2 ) {
+//int clock_gettime(clockid_t clk_id, struct timespect *tp);
 
-       double diffticks = clock1 - clock2;
-       double diffms    = diffticks / ( CLOCKS_PER_SEC / 1000 );
-
-       return diffms;
-   }
+timespec diff(timespec start, timespec end)
+{
+	timespec temp;
+	if ((end.tv_nsec-start.tv_nsec)<0) {
+		temp.tv_sec = end.tv_sec-start.tv_sec-1;
+		temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+	} else {
+		temp.tv_sec = end.tv_sec-start.tv_sec;
+		temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+	}
+	return temp;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -40,20 +48,24 @@ int main(int argc, char *argv[]) {
     string ipAddress = argv[1];
     string portNumber = argv[2];
 
-    clock_t start = clock();
-    clock_t t = clock();
-
+    timespec start;
+    clock_gettime(CLOCK_REALTIME, &start);
 
     Call_Client(ipAddress, portNumber, "1.0");
-    //Call_Telnet(ipAddress, portNumber, "1.0");
 
-    t = clock() - t;
-    clock_t end = clock();
+    timespec end;
+    clock_gettime(CLOCK_REALTIME, &end);
 
-    printf("diffclock: %f", diffclock( start, end ));
-    printf("totaltime: %f", t);
+    timespec start2;
+    clock_gettime(CLOCK_REALTIME, &start2);
 
-    //Call_Client(ipAddress, portNumber, "1.0");
+    Call_Client(ipAddress, portNumber, "1.1");
+
+    timespec end2;
+    clock_gettime(CLOCK_REALTIME, &end2);
+
+    cout<< "Protocol 1.0: " <<diff(start,end).tv_sec<<":"<<diff(start,end).tv_nsec<<endl;
+    cout<< "Protocol 1.1: " <<diff(start2,end2).tv_sec<<":"<<diff(start2,end2).tv_nsec<<endl;
 
     return 0;
 }
@@ -74,7 +86,7 @@ void Call_Client(string ipAddress, string portNumber, string version)
   aclient->Connect(ipAddress, portNumber, version);
   printf("\nCLENT: Sending Get Request\n");
 
-  for(int i = 0; i < 100; i++)
+  for(int i = 0; i < 10; i++)
   {
     int duration = 0;
 
