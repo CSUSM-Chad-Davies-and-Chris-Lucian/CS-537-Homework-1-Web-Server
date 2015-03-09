@@ -212,18 +212,23 @@ void routeMessage(string message, WebServer *server, int socketConnection)
     {
         execute_get_command(server, directory_path, version, socketConnection);
     }
-    if(command == "HEAD")
+    else if(command == "HEAD")
     {
         execute_head_command(server, directory_path, version, socketConnection);
     }
-    if(command == "PUT")
+    else if(command == "PUT")
     {
         execute_put_command(server, directory_path, message_body, version, socketConnection);
     }
-    if(command == "DELETE")
+    else if(command == "DELETE")
     {
         execute_delete_command(server, directory_path, version, socketConnection);
     }
+    else
+    {
+        send_500_error_to_client(server, version, socketConnection);
+    }
+
     if(version == "1.0")
     {
       server->CloseConnection(socketConnection);
