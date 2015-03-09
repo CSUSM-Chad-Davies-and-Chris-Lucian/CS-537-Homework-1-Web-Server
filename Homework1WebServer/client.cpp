@@ -41,14 +41,17 @@ int main(int argc, char *argv[]) {
     string portNumber = argv[2];
 
     clock_t start = clock();
+    clock_t t = clock();
 
 
     Call_Client(ipAddress, portNumber, "1.0");
     //Call_Telnet(ipAddress, portNumber, "1.0");
 
+    t = clock() - t;
     clock_t end = clock();
 
     printf("diffclock: %f", diffclock( start, end ));
+    printf("totaltime: %f", t);
 
     //Call_Client(ipAddress, portNumber, "1.0");
 
@@ -73,9 +76,9 @@ void Call_Client(string ipAddress, string portNumber, string version)
 
   for(int i = 0; i < 100; i++)
   {
-    int duration = 1000000;
+    int duration = 0;
 
-    printf ("i: %d", i);
+    printf ("i: %d\n", i);
     aclient->SendRequest("HEAD / HTTP/" + version);
     usleep(duration);
 
@@ -111,5 +114,6 @@ void Call_Client(string ipAddress, string portNumber, string version)
     usleep(duration);
   }
   printf("\nCLENT: Request Finished. Destroying Client\n");
-  aclient->~WebClient();
+  delete aclient;
+  //aclient->~WebClient();
 }
