@@ -1,3 +1,8 @@
+//Chris Lucian & Chad Davies
+//3/8/2015
+//CS 537
+//Programming Assignment 1 Web Server
+
 #ifndef WEBSERVER_H
 #define	WEBSERVER_H
 
@@ -14,11 +19,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "signal.h"
 #include <iostream>
 
 using namespace std;
 
-
+// class for web server
 class WebServer {
 public:
     WebServer(string portNumer);

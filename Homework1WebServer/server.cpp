@@ -280,20 +280,23 @@ void routeMessage(string message, WebServer *server, int socketConnection)
       return;
     }
 
+    //assign variables to protocol and version
     string protocal = fields2[0];
     string version = fields2[1].substr(0,3);
 
+    // Log commands composition back to console
     printf("command: \e[92m'%s'\e[0m, directory: \e[92m'%s'\e[0m, protocal: \e[92m'%s'\e[0m, version: \e[92m'%s'\e[0m \n ", command.c_str(), directory.c_str(), protocal.c_str(), version.c_str());
 
+    // changes the / to index file
     if(directory == "/")
     {
       directory = "/index.html";
     }
 
-
-
+    // constructs the directory path
     string directory_path = "html_root" + directory;
 
+    // this if block routes the command to the appropriate function
     if(command == "GET")
     {
         execute_get_command(server, directory_path, version, socketConnection);
@@ -310,11 +313,12 @@ void routeMessage(string message, WebServer *server, int socketConnection)
     {
         execute_delete_command(server, directory_path, version, socketConnection);
     }
-    else
+    else // if no command matches return an error to the client
     {
         send_500_error_to_client(server, version, socketConnection);
     }
 
+    // end the connection if version is 1.0
     if(version == "1.0")
     {
       server->CloseConnection(socketConnection);

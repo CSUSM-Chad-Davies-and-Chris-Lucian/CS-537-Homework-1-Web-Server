@@ -1,3 +1,8 @@
+//Chris Lucian & Chad Davies
+//3/8/2015
+//CS 537
+//Programming Assignment 1 Web Server
+
 #ifndef WEBCLIENT_H
 #define	WEBCLIENT_H
 
@@ -13,7 +18,7 @@
 
 using namespace std;
 
-
+// web client class for managing socket details
 class WebClient {
 public:
     WebClient();
