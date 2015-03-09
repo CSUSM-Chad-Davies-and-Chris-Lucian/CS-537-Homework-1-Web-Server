@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-//This main file is used to help quickly itterate on development when trying to build and clean up the programs in the project
+//This main file is used to help quickly iterate on development when trying to build and clean up the programs in the project
 int main(int argc, char *argv[]) {
     //Use the system command to clear the console
     system("clear");

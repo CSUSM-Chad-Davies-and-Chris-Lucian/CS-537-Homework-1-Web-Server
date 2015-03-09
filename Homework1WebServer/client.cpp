@@ -71,7 +71,7 @@ timespec diff(timespec start, timespec end)
 	timespec temp;
   //If end Nanoseconds is greater than start Nanoseconds
 	if ((end.tv_nsec-start.tv_nsec)<0) {
-    //Adjust seconds and Nanoseconds to accomodate the offset
+    //Adjust seconds and Nanoseconds to accommodate the offset
 		temp.tv_sec = end.tv_sec-start.tv_sec-1;
 		temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
 	} else {
@@ -97,12 +97,12 @@ void Call_Client(string ipAddress, string portNumber, string version)
   printf("\nCLENT: Starting stress test\n");
   for(int i = 0; i < 10; i++)
   {
-    //duratin set to 0 however when set above 0 this can be used for debugging
+    //duration set to 0 however when set above 0 this can be used for debugging
     int duration = 0;
 
     printf ("\nNum of Runs: %d\n", i);
 
-    //Get the headder for the index page
+    //Get the header for the index page
     aclient->SendRequest("HEAD / HTTP/" + version);
     usleep(duration);
 

@@ -48,12 +48,12 @@ WebServer::WebServer(string portNumer) {
         return;
     }
 
-    // liseten for the connections
+    // listen for the connections
     listen(socketHandle,100);
 }
 
 // start listening - creates an infinite while loop for connections
-// routes them to the message routing fuction
+// routes them to the message routing function
 void WebServer::StartListening(void (*messageRoutingFunction)(string message, WebServer* webServer, int socketConnection)){
     if(socketHandle >= 0)
     {
@@ -87,17 +87,17 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
             params.messageRoutingFunction = messageRoutingFunction;
             params.webServer = this;
 
-            // if reached max num of threads begin joining threads before
+            // if reached max number of threads begin joining threads before
             // creating new ones
             if(startJoining)
             {
               pthread_join(thread_id[threadIncrement], NULL);
             }
 
-            // create a new thread and pass the params to the new thread
+            // create a new thread and pass the parameters to the new thread
             int x = pthread_create(&thread_id[threadIncrement], NULL, &ThreadReadMessage, (void *)&params);
 
-            // detect when reached max num of threads and begin joining
+            // detect when reached max number of threads and begin joining
             if(threadIncrement == 9)
             {
               startJoining = true;
@@ -111,13 +111,13 @@ void WebServer::StartListening(void (*messageRoutingFunction)(string message, We
 }
 
 // thread for reading messages from the client
-// this is done in infinte loop to accomodate http 1.1 requests
+// this is done in infinite loop to accommodate http 1.1 requests
 void *WebServer::ThreadReadMessage(void *context)
 {
-  // infinte while loop for http 1.1 requests
+  // infinite while loop for http 1.1 requests
   while(1)
   {
-    // extract read message params
+    // extract read message parameters
     struct readMessageParams *params = ((struct readMessageParams *)context);
     int socketConnection =params->socketConnection;
     int socketHandle  = params->socketHandle;
@@ -174,6 +174,6 @@ void WebServer::CloseConnection(int socketConnection)
   pthread_exit(NULL);
 }
 
-// empty destructor due to infinte loop
+// empty destructor due to infinite loop
 WebServer::~WebServer() {
 }

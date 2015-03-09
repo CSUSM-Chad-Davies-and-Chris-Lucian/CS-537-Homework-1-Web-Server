@@ -3,7 +3,7 @@
 #CS 537
 #Programming Assignment 1 Web Server
 
-#build server, client, and tests. Exlcudes the clear_ls_make. This occurs whenever just "make" is called
+#build server, client, and tests. Excludes the clear_ls_make. This occurs whenever just "make" is called
 all: server client tests
 
 #build the server

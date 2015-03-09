@@ -23,7 +23,7 @@
 
 using namespace std;
 
-//Function declaratins
+//Function declarations
 void* thread_start_server(void *context);
 void routeMessage(string message, WebServer *server, int socketConnection);
 void send_404_error_to_client(WebServer *server, string version, int socketConnection);
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
 //A function to be used by the thread create in order to host the server
 void *thread_start_server(void *context) {
-    //retreives the connecton params from the variable passed by the thread create
+    //retrieves the connection parameters from the variable passed by the thread create
     struct connectionParams *params = (struct connectionParams*) context;
 
     //start the server and host it on the specified port
@@ -113,7 +113,7 @@ string getHeader(int content_length, string version, string status, int socketCo
   //set the content type of the response
   response += "Content-type: text/html; charset=UTF-8\n";
 
-  //construct the content length portion of the resrponse.
+  //construct the content length portion of the response.
   string length_string = boost::lexical_cast<std::string>(content_length);
   response += "Content-Length: " + length_string + "\n\n";
   return response;
@@ -137,7 +137,7 @@ void execute_get_command(WebServer *server, string directory_path, string versio
   return (execute_get_command(server, directory_path, version, "200 OK", socketConnection));
 }
 
-//Execturtes the get command
+//Executes the get command
 //Server parameter is used to send the response to the client
 //Directory Path is used to load files form the server to send to the client
 //Version parameter is used to set the HTTP version in the header response
@@ -147,7 +147,7 @@ void execute_get_command(WebServer *server, string directory_path, string versio
 {
     //log the file being sent to the client on the server output
     printf("Server Sending File %s", directory_path.c_str());
-    //atempt to opent he file
+    //attempt to open the file
     string line;
     ifstream myfile (directory_path.c_str());
     //If file was opened then it was found
@@ -159,7 +159,7 @@ void execute_get_command(WebServer *server, string directory_path, string versio
         int content_length = file_contents.length();
         //Get the header
         string header = getHeader(content_length, version, status, socketConnection);
-        //prepend the header and send it to the client
+        //prepends the header and send it to the client
         server->WriteMessage(header + file_contents + "\n\0", socketConnection);
         //close the file
         myfile.close();
@@ -193,7 +193,7 @@ void remove_if_exists(string directory_path)
     }
 }
 
-//execture the put command
+//Executes the put command
 void execute_put_command(WebServer *server, string directory_path, string message_body, string version, int socketConnection)
 {
     //delete the file in anticipation of the put
@@ -206,7 +206,7 @@ void execute_put_command(WebServer *server, string directory_path, string messag
     execute_get_command(server, string("html_root/file_created.html"), version, socketConnection);
 }
 
-//execture the delete command
+//Executes the delete command
 void execute_delete_command(WebServer *server, string directory_path, string version, int socketConnection)
 {
     //Delete the file
@@ -215,7 +215,7 @@ void execute_delete_command(WebServer *server, string directory_path, string ver
     execute_get_command(server, string("html_root/file_deleted.html"), version, socketConnection);
 }
 
-//execture the head command
+//Executes the head command
 void execute_head_command(WebServer *server, string directory_path, string version, int socketConnection)
 {
     //open the file
@@ -232,10 +232,10 @@ void execute_head_command(WebServer *server, string directory_path, string versi
     myfile.close();
 }
 
-//Routes messages that come from the web server object recieved from connected clients
+//Routes messages that come from the web server object received from connected clients
 void routeMessage(string message, WebServer *server, int socketConnection)
 {
-    //reuqest has been recieved, log the unparsed message to the console
+    //request has been received, log the unparsed message to the console
     printf("\nSERVER RECIEVED REQUEST: %s\n", message.c_str());
     vector <string> fields;
 
@@ -243,7 +243,7 @@ void routeMessage(string message, WebServer *server, int socketConnection)
     //This is done specifically for the put command
     int first_return_index = message.find_first_of('\n');
     string request_only = message.substr(0, first_return_index);
-    //split the isolated request on spaces to seperate the request info
+    //split the isolated request on spaces to separate the request info
     boost::split( fields, request_only, boost::is_any_of( " " ));
 
     //isolate the message body from the header
@@ -263,7 +263,7 @@ void routeMessage(string message, WebServer *server, int socketConnection)
       return;
     }
 
-    //assign variables to the command compoentns
+    //assign variables to the command components
     string command = fields[0];
     string directory = fields[1];
     string protocal_version = fields[2];

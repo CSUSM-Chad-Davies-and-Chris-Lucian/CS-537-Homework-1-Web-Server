@@ -20,7 +20,7 @@ void WebClient::Connect(string ipAddress, string port, string http_version){
     int portInt = atoi(port.c_str());
     socketInfo.sin_port = htons(portInt);
 
-    // establish continous connection for version 1.1
+    // establish continuous connection for version 1.1
     if(http_version == "1.1")
     {
       ConnectSocket();
@@ -111,7 +111,7 @@ void WebClient::SendRequest(string request){
     result = result + string(buffer);
     printf("Client Result: %s", result.c_str());
 
-    // if version is 1.0 then close conneciton
+    // if version is 1.0 then close connection
     if(version == "1.0")
     {
       close(socketHandle);
