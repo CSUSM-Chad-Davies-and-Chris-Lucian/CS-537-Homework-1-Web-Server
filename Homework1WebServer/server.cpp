@@ -305,6 +305,10 @@ void routeMessage(string message, WebServer *server, int socketConnection)
     {
         execute_head_command(server, directory_path, version, socketConnection);
     }
+    else if(command == "POST")
+    {
+        execute_put_command(server, directory_path, message_body, version, socketConnection);
+    }
     else if(command == "PUT")
     {
         execute_put_command(server, directory_path, message_body, version, socketConnection);
